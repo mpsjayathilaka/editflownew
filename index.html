@@ -1,0 +1,3934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="artifact-type" content="dashboard">
+<meta name="design-style" content="aurora">
+<title>EditFlow — Post-Production Studio &amp; Remote Operations</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+<style>
+:root {
+  color-scheme: dark;
+  --background: #081316;
+  --surface-container-low: #0e1d21;
+  --surface-container: #13252a;
+  --surface-container-high: #1a3239;
+  --on-surface: #edf6f8;
+  --on-surface-variant: #98b4bc;
+  --outline: #38515c;
+  --outline-variant: rgba(152, 180, 188, 0.16);
+  --primary: #5eead4;
+  --on-primary: #04201c;
+  --primary-container: rgba(94, 234, 212, 0.15);
+  --on-primary-container: #c7f7ef;
+  --secondary: #5d7882;
+  --tertiary: #6ee7b7;
+  --error: #f27474;
+  --on-error: #1a0606;
+
+  --data-1: #5eead4;
+  --data-2: #6ee7b7;
+  --data-3: #e8b954;
+  --data-4: #f08c70;
+  --data-context: #415861;
+
+  --positive: #6ee7b7;
+  --warning: #fbbf24;
+  --focus: var(--primary);
+  --glass-bg: rgba(19, 37, 42, 0.66);
+  --glass-solid: #13252a;
+  --glass-border: rgba(152, 180, 188, 0.18);
+  --specular: rgba(255, 255, 255, 0.12);
+  --backdrop-scrim: rgba(4, 10, 14, 0.72);
+  --glass-blur: 20px;
+  --sidebar-width: 268px;
+
+  --blob-1: rgba(94, 234, 212, 0.22);
+  --blob-2: rgba(56, 189, 248, 0.18);
+  --blob-3: rgba(134, 239, 172, 0.15);
+
+  --cyan-tint: color-mix(in srgb, var(--primary) 14%, transparent);
+  --positive-tint: color-mix(in srgb, var(--positive) 14%, transparent);
+  --warning-tint: color-mix(in srgb, var(--warning) 14%, transparent);
+  --error-tint: color-mix(in srgb, var(--error) 14%, transparent);
+
+  --shadow-glass: 0 16px 38px rgba(0, 0, 0, 0.34), inset 0 1px 0 var(--specular);
+  --shadow-pill: 0 10px 26px rgba(0, 0, 0, 0.28), inset 0 1px 0 var(--specular);
+
+  --font-headline: 'Instrument Sans', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-label: 'Geist Mono', monospace;
+
+  --display-size: clamp(1.65rem, 1.35rem + 1.15vw, 2.2rem);
+  --headline-size: clamp(1.18rem, 1.05rem + 0.45vw, 1.42rem);
+  --subhead-size: clamp(1.02rem, 0.96rem + 0.2vw, 1.14rem);
+  --body-size: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+  --label-size: 0.75rem;
+
+  --rounded: 0.5rem;
+  --rounded-lg: 0.875rem;
+  --rounded-full: 9999px;
+  --heading-tracking: -0.025em;
+  --label-tracking: 0.06em;
+
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long: 420ms;
+}
+
+[data-theme="crystal_light"] {
+  color-scheme: light;
+  --background: #eef3f9;
+  --surface-container-low: #f7fafe;
+  --surface-container: #ffffff;
+  --surface-container-high: #e3ecf6;
+  --glass-bg: rgba(255, 255, 255, 0.76);
+  --glass-solid: #ffffff;
+  --glass-border: rgba(15, 23, 42, 0.12);
+  --specular: rgba(255, 255, 255, 0.92);
+  --backdrop-scrim: rgba(15, 23, 42, 0.45);
+  --on-surface: #0f172a;
+  --on-surface-variant: #475569;
+  --outline: #64748b;
+  --outline-variant: rgba(15, 23, 42, 0.11);
+  --primary: #0071e3;
+  --on-primary: #ffffff;
+  --primary-container: rgba(0, 113, 227, 0.12);
+  --on-primary-container: #00438a;
+  --tertiary: #0f8a4b;
+  --positive: #0f8a4b;
+  --warning: #b4690e;
+  --error: #c82838;
+  --on-error: #ffffff;
+  --data-1: #0071e3;
+  --data-2: #0f8a4b;
+  --data-3: #b4690e;
+  --data-4: #c82838;
+  --blob-1: rgba(56, 189, 248, 0.25);
+  --blob-2: rgba(168, 85, 247, 0.18);
+  --blob-3: rgba(16, 185, 129, 0.16);
+  --shadow-glass: 0 14px 34px rgba(15, 23, 42, 0.08), inset 0 1px 0 var(--specular);
+  --shadow-pill: 0 8px 24px rgba(15, 23, 42, 0.08), inset 0 1px 0 var(--specular);
+}
+
+[data-theme="midnight_glass"] {
+  color-scheme: dark;
+  --background: #070b14;
+  --surface-container-low: #0e1626;
+  --surface-container: #131e33;
+  --surface-container-high: #1a2842;
+  --glass-bg: rgba(19, 30, 51, 0.68);
+  --glass-solid: #131e33;
+  --glass-border: rgba(148, 163, 184, 0.18);
+  --specular: rgba(255, 255, 255, 0.12);
+  --on-surface: #f1f5f9;
+  --on-surface-variant: #9fb0c7;
+  --outline: #475569;
+  --outline-variant: rgba(148, 163, 184, 0.16);
+  --primary: #60a5fa;
+  --on-primary: #071326;
+  --primary-container: rgba(96, 165, 250, 0.16);
+  --on-primary-container: #dbeafe;
+  --tertiary: #34d399;
+  --positive: #34d399;
+  --warning: #fbbf24;
+  --error: #fb7185;
+  --on-error: #1f060c;
+  --data-1: #60a5fa;
+  --data-2: #34d399;
+  --data-3: #fbbf24;
+  --data-4: #fb7185;
+  --blob-1: rgba(59, 130, 246, 0.24);
+  --blob-2: rgba(139, 92, 246, 0.2);
+  --blob-3: rgba(16, 185, 129, 0.15);
+}
+
+[data-theme="sunset"] {
+  color-scheme: dark;
+  --background: #170d16;
+  --surface-container-low: #221320;
+  --surface-container: #2b1828;
+  --surface-container-high: #392035;
+  --glass-bg: rgba(43, 24, 40, 0.68);
+  --glass-solid: #2b1828;
+  --glass-border: rgba(244, 114, 182, 0.2);
+  --specular: rgba(255, 255, 255, 0.12);
+  --on-surface: #fdf2f6;
+  --on-surface-variant: #d4b0c2;
+  --outline: #6b4263;
+  --outline-variant: rgba(212, 176, 194, 0.18);
+  --primary: #fb923c;
+  --on-primary: #260e03;
+  --primary-container: rgba(251, 146, 60, 0.18);
+  --on-primary-container: #ffedd5;
+  --tertiary: #4ade80;
+  --positive: #4ade80;
+  --warning: #facc15;
+  --error: #fb7185;
+  --on-error: #26040d;
+  --data-1: #fb923c;
+  --data-2: #4ade80;
+  --data-3: #facc15;
+  --data-4: #f472b6;
+  --blob-1: rgba(251, 146, 60, 0.26);
+  --blob-2: rgba(244, 114, 182, 0.24);
+  --blob-3: rgba(250, 204, 21, 0.16);
+}
+
+[data-theme="graphite"] {
+  color-scheme: dark;
+  --background: #101114;
+  --surface-container-low: #17191d;
+  --surface-container: #1d2026;
+  --surface-container-high: #272b33;
+  --glass-bg: rgba(29, 32, 38, 0.72);
+  --glass-solid: #1d2026;
+  --glass-border: rgba(203, 213, 225, 0.14);
+  --specular: rgba(255, 255, 255, 0.1);
+  --on-surface: #f4f5f7;
+  --on-surface-variant: #a6adb9;
+  --outline: #525866;
+  --outline-variant: rgba(166, 173, 185, 0.16);
+  --primary: #cbd5e1;
+  --on-primary: #0f172a;
+  --primary-container: rgba(203, 213, 225, 0.16);
+  --on-primary-container: #f8fafc;
+  --tertiary: #4ade80;
+  --positive: #4ade80;
+  --warning: #fbbf24;
+  --error: #f87171;
+  --on-error: #1f0606;
+  --data-1: #cbd5e1;
+  --data-2: #4ade80;
+  --data-3: #fbbf24;
+  --data-4: #f87171;
+  --blob-1: rgba(148, 163, 184, 0.18);
+  --blob-2: rgba(100, 116, 139, 0.16);
+  --blob-3: rgba(203, 213, 225, 0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: clip;
+  background-color: var(--background);
+  color: var(--on-surface);
+  font-family: var(--font-body);
+  font-size: var(--body-size);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+header { position: static !important; }
+button, input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.ambient-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.blob { position: absolute; border-radius: 50%; filter: blur(76px); will-change: transform; opacity: 0.9; }
+.blob-1 { width: 42vw; height: 42vw; top: -10%; left: -8%; background: var(--blob-1); animation: blob-drift-a 22s ease-in-out infinite alternate; }
+.blob-2 { width: 38vw; height: 38vw; bottom: -12%; right: -6%; background: var(--blob-2); animation: blob-drift-b 26s ease-in-out infinite alternate; }
+.blob-3 { width: 30vw; height: 30vw; top: 38%; left: 42%; background: var(--blob-3); animation: blob-drift-c 20s ease-in-out infinite alternate; }
+@keyframes blob-drift-a { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(6vw, 4vh) scale(1.12); } }
+@keyframes blob-drift-b { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(-5vw, -5vh) scale(1.08); } }
+@keyframes blob-drift-c { 0% { transform: translate(0, 0) scale(0.96); } 100% { transform: translate(-4vw, 6vh) scale(1.14); } }
+
+.app-shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  min-height: 100vh;
+  gap: var(--space-md);
+  padding: var(--space-md);
+}
+
+.sidebar {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rounded-lg);
+  box-shadow: var(--shadow-glass);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: var(--space-md);
+  height: calc(100vh - 2 * var(--space-md));
+  z-index: 30;
+  overflow: hidden;
+}
+
+.brand-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--outline-variant);
+}
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--rounded);
+  background: var(--primary-container);
+  border: 1px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-label);
+  font-weight: 700;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+.brand-title { font-family: var(--font-headline); font-weight: 700; font-size: 1.05rem; letter-spacing: var(--heading-tracking); }
+.brand-sub { font-family: var(--font-label); font-size: 0.6875rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: var(--label-tracking); }
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex: 1;
+  overflow-y: auto;
+}
+.nav-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: 0.55rem var(--space-md);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--rounded-full);
+  color: var(--on-surface-variant);
+  font-weight: 500;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  min-height: 44px;
+  transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-spring);
+}
+.nav-btn-left { display: flex; align-items: center; gap: var(--space-sm); min-width: 0; }
+.nav-btn:hover { background: var(--surface-container-high); color: var(--on-surface); transform: translateX(2px); }
+.nav-btn.is-active {
+  background: var(--primary-container);
+  color: var(--primary);
+  border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+  font-weight: 600;
+}
+.nav-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+.nav-count {
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--rounded-full);
+  background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  color: var(--on-surface-variant);
+}
+
+.sidebar-footer {
+  padding: var(--space-md);
+  border-top: 1px solid var(--outline-variant);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.main-area { display: flex; flex-direction: column; min-width: 0; gap: var(--space-md); }
+
+.topbar {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rounded-full);
+  box-shadow: var(--shadow-pill);
+  padding: var(--space-sm) var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+.topbar-left { display: flex; align-items: center; gap: var(--space-sm); flex: 1; min-width: 220px; }
+.topbar-right { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+
+.mobile-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--outline-variant);
+  background: var(--surface-container);
+  border-radius: var(--rounded-full);
+  cursor: pointer;
+}
+
+.global-search-wrap { position: relative; flex: 1; max-width: 260px; }
+.global-search-wrap svg { position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--on-surface-variant); pointer-events: none; }
+.global-search-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 0.9rem 0 2.35rem;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--rounded-full);
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+  font-size: 0.875rem;
+}
+
+.rbac-scope-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--rounded-full);
+  background: var(--cyan-tint);
+  color: var(--primary);
+  border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.rbac-scope-pill.is-restricted {
+  background: var(--warning-tint);
+  color: var(--warning);
+  border-color: color-mix(in srgb, var(--warning) 40%, transparent);
+}
+
+.user-switcher-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--rounded-full);
+  background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  min-height: 40px;
+}
+.user-switcher-label { font-family: var(--font-label); font-size: 0.72rem; color: var(--on-surface-variant); white-space: nowrap; }
+.user-switcher-select {
+  border: 0;
+  background: transparent;
+  color: var(--on-surface);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding-right: 0.35rem;
+}
+.user-switcher-select option { background: var(--surface-container); color: var(--on-surface); }
+
+.live-timer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0.375rem 0.85rem;
+  border-radius: var(--rounded-full);
+  background: var(--cyan-tint);
+  color: var(--primary);
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  cursor: pointer;
+  min-height: 40px;
+}
+.live-timer-pill.is-idle { background: var(--surface-container-low); color: var(--on-surface-variant); border-color: var(--outline-variant); }
+
+.presence-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.presence-online { background: var(--positive); }
+.presence-focus { background: var(--primary); }
+.presence-offline { background: var(--outline); }
+
+.page-content {
+  width: 100%;
+  max-width: 1420px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding-bottom: var(--space-xl);
+}
+.page-content * { min-width: 0; }
+
+.view-section { display: none; flex-direction: column; gap: var(--space-lg); }
+.view-section.is-active { display: flex; animation: fade-slide-in var(--dur-short) var(--ease-out); }
+@keyframes fade-slide-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  padding: var(--space-xs) var(--space-xs) var(--space-md);
+  border-bottom: 1px solid var(--outline-variant);
+}
+.page-title { margin: 0; font-family: var(--font-headline); font-size: var(--display-size); font-weight: 700; letter-spacing: var(--heading-tracking); line-height: 1.15; }
+.page-desc { margin: var(--space-xs) 0 0; color: var(--on-surface-variant); font-size: 0.9375rem; max-width: 68ch; }
+.header-actions { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rounded-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-glass);
+  transition: transform var(--dur-micro) var(--ease-spring), border-color var(--dur-micro) var(--ease-out);
+}
+.card-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm); margin-bottom: var(--space-md); flex-wrap: wrap; }
+.card-title { margin: 0; font-family: var(--font-headline); font-size: var(--headline-size); font-weight: 600; letter-spacing: var(--heading-tracking); }
+
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); gap: var(--space-md); }
+.kpi-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-top: 2px solid var(--primary);
+  border-radius: var(--rounded-lg);
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  box-shadow: var(--shadow-glass);
+  transition: transform var(--dur-micro) var(--ease-spring);
+}
+.kpi-card:hover { transform: translateY(-2px); }
+.kpi-label { font-family: var(--font-label); font-size: var(--label-size); text-transform: uppercase; letter-spacing: var(--label-tracking); color: var(--on-surface-variant); }
+.kpi-val { font-family: var(--font-headline); font-size: 1.7rem; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: var(--heading-tracking); line-height: 1.15; }
+.kpi-delta { font-family: var(--font-label); font-size: var(--label-size); color: var(--on-surface-variant); }
+
+.split-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr)); gap: var(--space-lg); }
+.split-grid-asym { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: var(--space-lg); }
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: var(--space-md); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-height: 44px;
+  padding: 0 var(--space-md);
+  border-radius: var(--rounded-full);
+  border: 1px solid transparent;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform var(--dur-micro) var(--ease-spring), background-color var(--dur-micro) var(--ease-out);
+}
+.btn:active { transform: scale(0.97); }
+.btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+.btn-sm { min-height: 36px; padding: 0 0.75rem; font-size: 0.8125rem; }
+.btn-primary { background: var(--primary); color: var(--on-primary); }
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-outline { background: var(--surface-container-low); border-color: var(--outline); color: var(--on-surface); }
+.btn-outline:hover { background: var(--surface-container-high); }
+.btn-success { background: var(--positive); color: var(--on-primary); }
+.btn-warning { background: var(--warning); color: var(--on-primary); }
+.btn-danger { background: var(--error); color: var(--on-error); }
+.btn-danger-outline { background: transparent; border-color: var(--error); color: var(--error); }
+
+.filter-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(165px, 100%), 1fr));
+  gap: var(--space-sm);
+  align-items: end;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rounded-lg);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-pill);
+}
+.field { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+.field label { font-family: var(--font-label); font-size: var(--label-size); font-weight: 500; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: var(--label-tracking); }
+.input, .select, .textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--rounded);
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+  font-size: 0.875rem;
+}
+.select { padding-right: 2rem; }
+.textarea { min-height: 82px; resize: vertical; }
+
+.subtab-bar { display: flex; gap: var(--space-xs); flex-wrap: wrap; border-bottom: 1px solid var(--outline-variant); padding-bottom: var(--space-sm); }
+.subtab-btn {
+  padding: 0.45rem 1rem;
+  border-radius: var(--rounded-full);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--on-surface-variant);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  min-height: 40px;
+}
+.subtab-btn.is-active { background: var(--primary-container); color: var(--primary); border-color: color-mix(in srgb, var(--primary) 40%, transparent); }
+
+.project-dossier-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: var(--space-md); }
+.project-dossier-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rounded-lg);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  box-shadow: var(--shadow-pill);
+}
+.video-link-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: 0.45rem 0.7rem;
+  border-radius: var(--rounded);
+  background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  font-size: 0.8125rem;
+  width: 100%;
+}
+.video-url-mono { font-family: var(--font-label); font-size: 0.75rem; color: var(--primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.look-notes-box { padding: var(--space-sm) var(--space-md); border-radius: var(--rounded); background: var(--surface-container-low); border-left: 3px solid var(--primary); font-size: 0.84rem; color: var(--on-surface-variant); }
+
+.kanban-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); gap: var(--space-md); align-items: start; }
+.kanban-col {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rounded-lg);
+  padding: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-height: 280px;
+}
+.kanban-col.is-drag-over { border-color: var(--primary); background: var(--cyan-tint); }
+.kanban-col-head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-xs) var(--space-sm); font-family: var(--font-label); font-size: var(--label-size); text-transform: uppercase; letter-spacing: var(--label-tracking); color: var(--on-surface-variant); }
+.kanban-card {
+  background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--rounded);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  cursor: grab;
+  transition: transform var(--dur-micro) var(--ease-spring), border-color var(--dur-micro) var(--ease-out);
+}
+.kanban-card:hover { transform: translateY(-2px); border-color: var(--primary); }
+
+.table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--glass-border); border-radius: var(--rounded-lg); background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)) saturate(180%); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%); }
+table { width: 100%; border-collapse: collapse; font-size: 0.875rem; min-width: 680px; }
+th {
+  background: var(--surface-container-low);
+  color: var(--on-surface-variant);
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--label-tracking);
+  text-align: left;
+  padding: 0.75rem 0.875rem;
+  border-bottom: 1px solid var(--outline-variant);
+  white-space: nowrap;
+}
+td { padding: 0.75rem 0.875rem; border-bottom: 1px solid var(--outline-variant); vertical-align: middle; }
+tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: var(--surface-container-high); }
+.mono { font-family: var(--font-label); font-variant-numeric: tabular-nums; }
+.text-right { text-align: right; }
+
+.badge { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.6rem; border-radius: var(--rounded-full); font-family: var(--font-label); font-size: 0.72rem; font-weight: 600; white-space: nowrap; border: 1px solid transparent; }
+.badge-success { background: var(--positive-tint); color: var(--positive); border-color: color-mix(in srgb, var(--positive) 35%, transparent); }
+.badge-warning { background: var(--warning-tint); color: var(--warning); border-color: color-mix(in srgb, var(--warning) 35%, transparent); }
+.badge-danger { background: var(--error-tint); color: var(--error); border-color: color-mix(in srgb, var(--error) 35%, transparent); }
+.badge-info { background: var(--cyan-tint); color: var(--primary); border-color: color-mix(in srgb, var(--primary) 35%, transparent); }
+.badge-neutral { background: var(--surface-container-high); color: var(--on-surface-variant); border-color: var(--outline-variant); }
+
+.progress-track { width: 100%; height: 8px; background: var(--surface-container-low); border: 1px solid var(--outline-variant); border-radius: var(--rounded-full); overflow: hidden; }
+.progress-fill { height: 100%; background: var(--primary); border-radius: var(--rounded-full); transition: width var(--dur-short) var(--ease-out); }
+
+.timer-hero {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rounded-lg);
+  box-shadow: var(--shadow-glass);
+  padding: var(--space-lg);
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: var(--space-lg);
+  align-items: center;
+}
+.timer-display { font-family: var(--font-label); font-size: clamp(2.1rem, 1.8rem + 1.5vw, 3.1rem); font-weight: 600; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; margin: var(--space-sm) 0; }
+
+.chart-box { min-height: 220px; display: flex; flex-direction: column; justify-content: center; gap: var(--space-sm); }
+.bar-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 110px; gap: var(--space-sm); align-items: center; }
+.bar-track { height: 12px; background: var(--surface-container-low); border: 1px solid var(--outline-variant); border-radius: var(--rounded-full); overflow: hidden; }
+.bar-fill { height: 100%; border-radius: var(--rounded-full); transition: width var(--dur-long) var(--ease-out); }
+.bar-series-1 { background: var(--data-1); }
+.bar-series-2 { background: var(--data-2); }
+.bar-series-3 { background: var(--data-3); }
+.bar-series-4 { background: var(--data-4); }
+
+.avatar-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--rounded-full);
+  background: var(--cyan-tint);
+  border: 1px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-label);
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.checklist-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: 0.5rem 0.65rem;
+  border-radius: var(--rounded);
+  background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  font-size: 0.85rem;
+}
+
+.delivered-banner {
+  background: var(--positive-tint);
+  border: 1px solid color-mix(in srgb, var(--positive) 40%, transparent);
+  border-radius: var(--rounded-lg);
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.stream-viewport {
+  position: relative;
+  border-radius: var(--rounded-lg);
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  background: var(--surface-container-low);
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+.stream-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  background: var(--background);
+}
+.stream-canvas { width: 100%; height: 100%; display: block; }
+.stream-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--surface-container);
+  border-top: 1px solid var(--outline-variant);
+}
+
+.empty-state { text-align: center; padding: var(--space-xl) var(--space-md); color: var(--on-surface-variant); border: 1px dashed var(--outline); border-radius: var(--rounded-lg); background: var(--surface-container-low); }
+
+.modal-backdrop { position: fixed; inset: 0; background: var(--backdrop-scrim); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: var(--space-md); z-index: 60; }
+.modal-backdrop.is-open { display: flex; }
+.modal-panel {
+  background: var(--surface-container);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--rounded-lg);
+  width: 100%;
+  max-width: 780px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-glass);
+  padding: var(--space-lg);
+}
+.modal-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: var(--space-sm); border-bottom: 1px solid var(--outline-variant); margin-bottom: var(--space-md); gap: var(--space-sm); }
+.form-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); gap: var(--space-md); }
+.form-error { color: var(--error); font-size: 0.8125rem; font-weight: 500; margin-top: var(--space-xs); }
+
+.toast-stack { position: fixed; right: var(--space-lg); bottom: var(--space-lg); display: flex; flex-direction: column; gap: var(--space-xs); z-index: 80; max-width: 360px; }
+.toast { background: var(--surface-container-high); color: var(--on-surface); padding: 0.75rem 1rem; border-radius: var(--rounded); border: 1px solid var(--glass-border); border-left: 4px solid var(--positive); box-shadow: var(--shadow-glass); font-size: 0.875rem; }
+.toast.is-error { border-left-color: var(--error); }
+.toast.is-warn { border-left-color: var(--warning); }
+
+.drawer-overlay { display: none; position: fixed; inset: 0; background: var(--backdrop-scrim); z-index: 25; }
+.muted-text { color: var(--on-surface-variant); }
+.small-label { font-family: var(--font-label); font-size: 0.72rem; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: var(--label-tracking); }
+
+@media (max-width: 960px) { .split-grid-asym, .timer-hero { grid-template-columns: 1fr; } }
+@media (max-width: 768px) {
+  .app-shell { grid-template-columns: 1fr; padding: var(--space-sm); }
+  .sidebar { position: fixed; left: -300px; top: var(--space-sm); height: calc(100vh - 2 * var(--space-sm)); width: var(--sidebar-width); transition: left var(--dur-short) var(--ease-out); }
+  .sidebar.is-open { left: var(--space-sm); }
+  .drawer-overlay.is-open { display: block; }
+  .mobile-menu-btn { display: inline-flex; }
+  .topbar { border-radius: var(--rounded-lg); }
+}
+@media (max-width: 640px) {
+  .bar-row { grid-template-columns: 1fr; gap: 0.25rem; }
+  .page-header { flex-direction: column; align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  .blob { animation: none !important; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .sidebar, .topbar, .card, .kpi-card, .filter-bar, .kanban-col, .table-wrap, .timer-hero, .project-dossier-card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--glass-solid) !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="ambient-canvas" aria-hidden="true">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<div class="drawer-overlay" id="drawer-overlay" onclick="toggleMobileDrawer(false)"></div>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand-bar">
+      <div class="brand-mark">EF</div>
+      <div>
+        <div class="brand-title">EditFlow</div>
+        <div class="brand-sub">Studio Operations</div>
+      </div>
+    </div>
+
+    <ul class="nav-list" id="nav-list" role="tablist" aria-orientation="vertical"></ul>
+
+    <div class="sidebar-footer">
+      <div class="field">
+        <label for="theme-quick-select">My Glass Theme</label>
+        <select id="theme-quick-select" class="select" onchange="setUserTheme(this.value)">
+          <option value="aurora">Aurora</option>
+          <option value="crystal_light">Crystal Light</option>
+          <option value="midnight_glass">Midnight Glass</option>
+          <option value="sunset">Sunset</option>
+          <option value="graphite">Graphite</option>
+        </select>
+      </div>
+      <div id="role-footer-note" class="small-label">EditFlow RBAC · Scoped Views</div>
+    </div>
+  </aside>
+
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button type="button" class="mobile-menu-btn" aria-label="Open menu" onclick="toggleMobileDrawer(true)">
+          <i data-lucide="menu" aria-hidden="true"></i>
+        </button>
+        <div class="global-search-wrap">
+          <i data-lucide="search" aria-hidden="true"></i>
+          <input id="global-search-input" type="search" class="global-search-input" placeholder="Search EditFlow projects, tasks..." oninput="handleGlobalSearch(this.value)">
+        </div>
+        <span class="rbac-scope-pill" id="rbac-scope-pill">
+          <i data-lucide="shield-check" aria-hidden="true"></i>
+          <span id="rbac-scope-text">Manager · Scoped Access</span>
+        </span>
+      </div>
+
+      <div class="topbar-right" id="topbar-user-controls"></div>
+    </header>
+
+    <main class="page-content" id="main-content">
+      <!-- 1. DASHBOARD -->
+      <section id="view-dashboard" class="view-section is-active" aria-labelledby="title-dashboard">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="title-dashboard">EditFlow Command Center</h1>
+            <p class="page-desc" id="dashboard-subtitle">Real-time post-production metrics scoped strictly to your active role and assignments.</p>
+          </div>
+          <div class="header-actions" id="dashboard-header-actions"></div>
+        </div>
+        <div class="kpi-grid" id="dashboard-kpis"></div>
+        <div id="dashboard-dynamic-panels" style="display:flex;flex-direction:column;gap:var(--space-lg);"></div>
+      </section>
+
+      <!-- 2. TEAM ANALYTICS (Admin Only) -->
+      <section id="view-analytics" class="view-section" aria-labelledby="title-analytics">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="title-analytics">Team Analytics</h1>
+            <p class="page-desc">Admin-only oversight of tracked team time, project margins, and regional capacity across all EditFlow contributors.</p>
+          </div>
+          <div class="header-actions">
+            <button type="button" class="btn btn-primary" onclick="exportAnalyticsCsv()"><i data-lucide="download" aria-hidden="true"></i>Export CSV</button>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <div class="field">
+            <label for="filter-analytics-region">Team Region</label>
+            <select id="filter-analytics-region" class="select" onchange="renderAnalyticsView()">
+              <option value="all">All Teams</option>
+              <option value="LK">Sri Lanka</option>
+              <option value="INTL">International</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="filter-analytics-project">Project</label>
+            <select id="filter-analytics-project" class="select" onchange="renderAnalyticsView()"></select>
+          </div>
+          <div class="field">
+            <label for="filter-analytics-currency">Summary Currency</label>
+            <select id="filter-analytics-currency" class="select" onchange="setDisplayCurrency(this.value)"></select>
+          </div>
+        </div>
+
+        <div class="kpi-grid" id="analytics-kpis"></div>
+
+        <div class="split-grid-asym">
+          <div class="card">
+            <div class="card-header"><h2 class="card-title">Approved Hours by Team Member</h2><span class="badge badge-neutral">Team Contributors</span></div>
+            <div id="analytics-member-chart" class="chart-box"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h2 class="card-title">Approved Hours by Project</h2></div>
+            <div id="analytics-project-chart" class="chart-box"></div>
+          </div>
+        </div>
+
+        <div class="split-grid-2">
+          <div class="card">
+            <div class="card-header"><h2 class="card-title">Sri Lanka vs International</h2></div>
+            <div id="analytics-region-chart" class="chart-box"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h2 class="card-title">Time Entry Approval Status</h2></div>
+            <div id="analytics-status-chart" class="chart-box"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h2 class="card-title">Member Time Tracking &amp; Workload Summary</h2></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Member</th><th>Presence</th><th>Region</th><th>Type</th><th>Approved Time</th><th>Pending</th><th>Entries</th><th>Open Tasks</th><th>Top Software</th><th class="text-right">Est. Labour Cost</th></tr></thead>
+              <tbody id="analytics-member-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h2 class="card-title">Project Progress &amp; Finance</h2></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Project</th><th>Status</th><th>Budget</th><th>Invoiced</th><th>Collected</th><th>Outstanding</th><th>Approved Time</th><th>Readiness</th></tr></thead>
+              <tbody id="analytics-project-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. SCREEN STREAM VIEWER & REMOTE DESK (AnyDesk / Parsec Style) -->
+      <section id="view-screen-share" class="view-section" aria-labelledby="title-screen-share">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="title-screen-share">Screen Stream Viewer &amp; Remote Desk</h1>
+            <p class="page-desc" id="screen-share-desc">Low-latency AnyDesk / Parsec style screen sharing. Team members broadcast their workstation; only Admin and Manager roles can view active member streams.</p>
+          </div>
+          <div class="header-actions" id="screen-share-header-actions"></div>
+        </div>
+
+        <div id="screen-share-workspace" style="display:flex;flex-direction:column;gap:var(--space-lg);"></div>
+      </section>
+
+      <!-- 4. TASK MANAGER & VIDEO WORKFLOWS -->
+      <section id="view-projects" class="view-section" aria-labelledby="title-projects">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="title-projects">Task Manager &amp; Video Production</h1>
+            <p class="page-desc">Assign tasks to specific team members, inspect video briefs, and promote Final-Approved projects directly to Delivery.</p>
+          </div>
+          <div class="header-actions" id="projects-header-actions"></div>
+        </div>
+
+        <div class="card" style="padding:var(--space-md) var(--space-lg);">
+          <div class="card-header" style="margin-bottom:var(--space-sm);">
+            <h2 class="card-title" style="font-size:var(--subhead-size);">Active Project Briefs &amp; Video Editing Specs</h2>
+            <span class="small-label" id="projects-dossier-count">0 active projects</span>
+          </div>
+          <div class="project-dossier-strip" id="projects-dossier-strip"></div>
+        </div>
+
+        <div class="filter-bar">
+          <div class="field">
+            <label for="filter-task-search">Search Tasks</label>
+            <input id="filter-task-search" type="search" class="input" placeholder="Keyword or project..." oninput="renderProjectsView()">
+          </div>
+          <div class="field">
+            <label for="filter-task-project">Project</label>
+            <select id="filter-task-project" class="select" onchange="renderProjectsView()"></select>
+          </div>
+          <div class="field" id="filter-task-member-wrap">
+            <label for="filter-task-member">Assignee</label>
+            <select id="filter-task-member" class="select" onchange="renderProjectsView()"></select>
+          </div>
+          <div class="field">
+            <label for="filter-task-priority">Priority</label>
+            <select id="filter-task-priority" class="select" onchange="renderProjectsView()">
+              <option value="all">All Priorities</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="projects-view-mode">Task Layout</label>
+            <select id="projects-view-mode" class="select" onchange="renderProjectsView()">
+              <option value="kanban">Kanban Board</option>
+              <option value="table">Table View</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="projects-workspace-container"></div>
+      </section>
+
+      <!-- 5. TIME TRACKER (Members & Managers track; Admin views oversight) -->
+      <section id="view-time-tracker" class="view-section" aria-labelledby="title-time-tracker">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="title-time-tracker">Time Tracker &amp; Approvals</h1>
+            <p class="page-desc" id="time-tracker-desc">Exact-second live stopwatch tracking (e.g., 00:00:45 = 45 seconds). Admin does not track personal time and instead reviews team-wide analytics.</p>
+          </div>
+          <div class="header-actions" id="time-header-actions"></div>
+        </div>
+
+        <div class="timer-hero" id="timer-hero-card">
+          <div>
+            <span class="badge badge-info" id="timer-status-badge">READY TO TRACK</span>
+            <div class="timer-display" id="stopwatch-display">00:00:00</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:var(--space-sm);font-size:0.8125rem;color:var(--on-surface-variant);">
+              <div><span>Member</span><strong id="meta-member" style="display:block;color:var(--on-surface);">—</strong></div>
+              <div><span>Software</span><strong id="meta-software" style="display:block;color:var(--on-surface);">—</strong></div>
+              <div><span>Project</span><strong id="meta-project" style="display:block;color:var(--on-surface);">—</strong></div>
+              <div><span>Work File</span><strong id="meta-file" style="display:block;color:var(--on-surface);">—</strong></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-sm);">
+            <div class="form-grid-2">
+              <div class="field"><label for="timer-member">Member</label><select id="timer-member" class="select"></select></div>
+              <div class="field"><label for="timer-software">Software</label><select id="timer-software" class="select"></select></div>
+              <div class="field"><label for="timer-project">Project</label><select id="timer-project" class="select" onchange="populateTimerTasks()"></select></div>
+              <div class="field"><label for="timer-task">Task (Optional)</label><select id="timer-task" class="select"></select></div>
+            </div>
+            <div class="field">
+              <label for="timer-file">Work / Sequence File Name</label>
+              <input id="timer-file" type="text" class="input" placeholder="e.g., Launch_Master_v4.prproj">
+            </div>
+            <div style="display:flex;gap:var(--space-sm);flex-wrap:wrap;">
+              <button type="button" class="btn btn-success" id="btn-timer-start" onclick="startTimer()"><i data-lucide="play" aria-hidden="true"></i>Start Timer</button>
+              <button type="button" class="btn btn-warning" id="btn-timer-pause" onclick="pauseOrResumeTimer()" style="display:none;">Pause</button>
+              <button type="button" class="btn btn-danger" id="btn-timer-stop" onclick="stopTimer()" style="display:none;">Stop &amp; Save</button>
+            </div>
+            <div id="timer-error" class="form-error" style="display:none;"></div>
+          </div>
+        </div>
+
+        <div id="admin-no-personal-timer-banner" class="card" style="display:none;border-left:4px solid var(--primary);">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-md);flex-wrap:wrap;">
+            <div>
+              <h2 class="card-title" style="margin:0 0 var(--space-xs);">Admin Time Oversight Mode</h2>
+              <p class="muted-text" style="margin:0;font-size:0.88rem;">Admin accounts do not track personal time. Review team-wide approved/pending logs below or open <strong>Team Analytics</strong> for full member tracking summaries.</p>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="switchView('analytics')">Open Team Analytics</button>
+          </div>
+        </div>
+
+        <div class="split-grid-asym">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Approved Time by Software</h2>
+              <span class="mono" id="time-filtered-total" style="font-size:0.9rem;color:var(--primary);">0h 00m 00s</span>
+            </div>
+            <div id="time-weekly-chart" class="chart-box"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h2 class="card-title">Filter Session Logs</h2></div>
+            <div style="display:flex;flex-direction:column;gap:var(--space-sm);">
+              <div class="field" id="filter-time-member-wrap"><label for="filter-time-member">Member</label><select id="filter-time-member" class="select" onchange="renderTimeTrackerView()"></select></div>
+              <div class="field"><label for="filter-time-software">Software</label><select id="filter-time-software" class="select" onchange="renderTimeTrackerView()"></select></div>
+              <div class="field"><label for="filter-time-project">Project</label><select id="filter-time-project" class="select" onchange="renderTimeTrackerView()"></select></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Member</th><th>Software</th><th>Project</th><th>File / Sequence</th><th>Date</th><th>Duration (Exact)</th><th>Status</th><th class="text-right">Action</th></tr>
+            </thead>
+            <tbody id="time-logs-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 6. TEAM & CLIENT DIRECTORY -->
+      <section id="view-members" class="view-section" aria-labelledby="title-members">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="title-members">Team &amp; Client Directory</h1>
+            <p class="page-desc" id="members-subtitle">View live presence, skills, timezones, and client accounts. Only each user can change their own online/offline presence.</p>
+          </div>
+          <div class="header-actions" id="members-header-actions"></div>
+        </div>
+
+        <div class="filter-bar" id="members-filter-bar">
+          <div class="field">
+            <label for="filter-member-search">Search Name / Skill / Org</label>
+            <input id="filter-member-search" type="search" class="input" placeholder="Search directory..." oninput="renderMembersView()">
+          </div>
+          <div class="field">
+            <label for="filter-member-role">Account Role</label>
+            <select id="filter-member-role" class="select" onchange="renderMembersView()">
+              <option value="all">All Roles</option>
+              <option value="member">Team Members</option>
+              <option value="manager">Managers</option>
+              <option value="client">Clients</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="filter-member-region">Region</label>
+            <select id="filter-member-region" class="select" onchange="renderMembersView()">
+              <option value="all">All Regions</option>
+              <option value="LK">Sri Lanka</option>
+              <option value="INTL">International</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="filter-member-presence">Presence</label>
+            <select id="filter-member-presence" class="select" onchange="renderMembersView()">
+              <option value="all">All</option>
+              <option value="online">Online</option>
+              <option value="focus">In Focus</option>
+              <option value="offline">Offline</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cards-grid" id="members-grid"></div>
+      </section>
+
+      <!-- 7. DELIVERY & FINAL DELIVERY DEADLINE -->
+      <section id="view-project-overview" class="view-section" aria-labelledby="title-project-overview">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="title-project-overview">Delivery &amp; Final Delivery Deadlines</h1>
+            <p class="page-desc">Final-Approved projects move here automatically with master video links and readiness sign-offs.</p>
+          </div>
+          <div class="header-actions" id="overview-header-actions"></div>
+        </div>
+
+        <div class="filter-bar">
+          <div class="field">
+            <label for="filter-overview-search">Search Project</label>
+            <input id="filter-overview-search" type="search" class="input" placeholder="Project ID, title, or client..." oninput="renderProjectOverviewView()">
+          </div>
+          <div class="field">
+            <label for="filter-overview-category">Category</label>
+            <select id="filter-overview-category" class="select" onchange="renderProjectOverviewView()">
+              <option value="all">All Categories</option>
+              <option value="Video">Video</option>
+              <option value="Motion/3D">Motion/3D</option>
+              <option value="Graphic Design">Graphic Design</option>
+              <option value="Web/Software">Web/Software</option>
+              <option value="Audio">Audio</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="filter-overview-status">Delivery Stage</label>
+            <select id="filter-overview-status" class="select" onchange="renderProjectOverviewView()">
+              <option value="all">All Projects</option>
+              <option value="delivered">Delivered (Final Approved)</option>
+              <option value="active_pipeline">Approaching Delivery Deadline</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="delivered-projects-section"></div>
+        <div id="readiness-pipeline-section"></div>
+      </section>
+
+      <!-- 8. FINANCE & INVOICES (MULTI-CURRENCY, Admin & Manager) -->
+      <section id="view-finance-tracker" class="view-section" aria-labelledby="title-finance-tracker">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="title-finance-tracker">Finance &amp; Invoices (Multi-Currency)</h1>
+            <p class="page-desc">Admin and Manager access to multi-currency invoicing (USD, EUR, GBP, LKR, AUD, INR), payment recording, payroll readiness, and audit records.</p>
+          </div>
+          <div class="header-actions" id="finance-header-actions"></div>
+        </div>
+
+        <div class="subtab-bar" id="finance-subtab-bar" role="tablist"></div>
+        <div id="finance-tab-content" style="display:flex;flex-direction:column;gap:var(--space-lg);"></div>
+      </section>
+
+      <!-- 9. GLASS UI SETTINGS -->
+      <section id="view-settings" class="view-section" aria-labelledby="title-settings">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="title-settings">Glass UI Settings &amp; Preferences</h1>
+            <p class="page-desc">Per-user Liquid Glass themes, self-managed presence status, currency preferences, and EditFlow RBAC controls.</p>
+          </div>
+          <div class="header-actions" id="settings-header-actions"></div>
+        </div>
+
+        <div id="settings-dynamic-grid" class="split-grid-2"></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="app-modal" onclick="handleBackdropClick(event)">
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-head">
+      <h2 class="card-title" id="modal-title">Modal</h2>
+      <button type="button" class="btn btn-outline btn-sm" onclick="closeModal()" aria-label="Close modal">Close</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
+<api-shim></api-shim>
+<script>
+const CURRENCY_CATALOG = {
+  USD: { code: `USD`, symbol: `$`, name: `US Dollar`, country: `United States`, rateToUsd: 1 },
+  EUR: { code: `EUR`, symbol: `€`, name: `Euro`, country: `Eurozone`, rateToUsd: 1.08 },
+  GBP: { code: `GBP`, symbol: `£`, name: `British Pound`, country: `United Kingdom`, rateToUsd: 1.27 },
+  LKR: { code: `LKR`, symbol: `Rs.`, name: `Sri Lankan Rupee`, country: `Sri Lanka`, rateToUsd: 0.0033 },
+  AUD: { code: `AUD`, symbol: `A$`, name: `Australian Dollar`, country: `Australia`, rateToUsd: 0.66 },
+  INR: { code: `INR`, symbol: `₹`, name: `Indian Rupee`, country: `India`, rateToUsd: 0.012 }
+};
+
+const SOFTWARE_OPTIONS = [
+  `Premiere Pro`, `After Effects`, `DaVinci Resolve`, `Blender 3D`, `Figma`, `Pro Tools`
+];
+
+let appState = buildDefaultState();
+let adminSessionUnlocked = false;
+let pendingAdminSwitchId = null;
+let timerInterval = null;
+let streamAnimId = null;
+let streamTick = 0;
+
+let timerState = {
+  running: false,
+  paused: false,
+  accumulatedMs: 0,
+  startTimeMs: 0,
+  memberId: ``,
+  software: `Premiere Pro`,
+  projectId: ``,
+  taskId: ``,
+  fileName: ``
+};
+
+function buildDefaultState() {
+  return {
+    activeUserId: `USR-MGR`,
+    activeView: `dashboard`,
+    searchQuery: ``,
+    financeSubtab: `invoices`,
+    displayCurrency: `USD`,
+    selectedProjectId: `PRJ-101`,
+    selectedStreamMemberId: `USR-NETHMI`,
+    userThemes: {
+      "USR-ADMIN": `aurora`,
+      "USR-MGR": `aurora`,
+      "USR-NETHMI": `midnight_glass`,
+      "USR-KASUN": `sunset`,
+      "USR-MAYA": `crystal_light`
+    },
+    users: [
+      {
+        id: `USR-ADMIN`,
+        username: `admin`,
+        name: `Kavinda Perera`,
+        role: `admin`,
+        title: `Studio Executive Admin`,
+        region: `LK`,
+        employmentType: `full_time`,
+        timezone: `Asia/Colombo (UTC+5:30)`,
+        hourlyRate: 75,
+        presence: `online`,
+        avatar: `KP`,
+        skills: [`Executive Oversight`, `Multi-Currency Finance`, `Remote Desk`]
+      },
+      {
+        id: `USR-MGR`,
+        username: `manager`,
+        name: `Sahan Silva`,
+        role: `manager`,
+        title: `Post-Production Manager`,
+        region: `LK`,
+        employmentType: `full_time`,
+        timezone: `Asia/Colombo (UTC+5:30)`,
+        hourlyRate: 52,
+        presence: `online`,
+        avatar: `SS`,
+        skills: [`Production Ops`, `Client Delivery`, `QC Review`]
+      },
+      {
+        id: `USR-NETHMI`,
+        username: `nethmi`,
+        name: `Nethmi Fernando`,
+        role: `member`,
+        title: `Senior Video Editor & Colorist`,
+        region: `LK`,
+        employmentType: `full_time`,
+        timezone: `Asia/Colombo (UTC+5:30)`,
+        hourlyRate: 40,
+        presence: `focus`,
+        avatar: `NF`,
+        skills: [`Premiere Pro`, `DaVinci Resolve`, `Color Grading`]
+      },
+      {
+        id: `USR-KASUN`,
+        username: `kasun`,
+        name: `Kasun Wijeratne`,
+        role: `member`,
+        title: `3D & Motion Designer`,
+        region: `LK`,
+        employmentType: `part_time`,
+        timezone: `Asia/Colombo (UTC+5:30)`,
+        hourlyRate: 36,
+        presence: `online`,
+        avatar: `KW`,
+        skills: [`After Effects`, `Blender 3D`, `Title Design`]
+      },
+      {
+        id: `USR-MAYA`,
+        username: `maya`,
+        name: `Maya Lin`,
+        role: `member`,
+        title: `Sound Designer & Finishing Editor`,
+        region: `INTL`,
+        employmentType: `freelancer`,
+        timezone: `Australia/Sydney (UTC+11)`,
+        hourlyRate: 48,
+        presence: `offline`,
+        avatar: `ML`,
+        skills: [`Pro Tools`, `Audio Mix`, `Premiere Pro`]
+      },
+      {
+        id: `USR-CLI-1`,
+        username: `apex_client`,
+        name: `Elena Vance`,
+        role: `client`,
+        title: `VP Brand Marketing · Apex Robotics`,
+        region: `INTL`,
+        employmentType: `client`,
+        timezone: `America/Los_Angeles (UTC-8)`,
+        hourlyRate: 0,
+        presence: `online`,
+        avatar: `EV`,
+        company: `Apex Robotics`,
+        billingCurrency: `USD`,
+        skills: [`Brand Stakeholder`, `Final Cut Reviewer`]
+      },
+      {
+        id: `USR-CLI-2`,
+        username: `ceylon_client`,
+        name: `Rohan De Mel`,
+        role: `client`,
+        title: `Creative Director · Ceylon Botanicals`,
+        region: `LK`,
+        employmentType: `client`,
+        timezone: `Asia/Colombo (UTC+5:30)`,
+        hourlyRate: 0,
+        presence: `offline`,
+        avatar: `RD`,
+        company: `Ceylon Botanicals`,
+        billingCurrency: `LKR`,
+        skills: [`Campaign Sponsor`]
+      }
+    ],
+    projects: [
+      {
+        id: `PRJ-101`,
+        title: `Apex Launch Film — 60s Hero Cut`,
+        client: `Apex Robotics`,
+        category: `Video`,
+        status: `in_progress`,
+        adminOnly: false,
+        assignedMemberIds: [`USR-MGR`, `USR-NETHMI`, `USR-KASUN`],
+        deliveryDeadline: `2026-11-28`,
+        approvedAt: null,
+        deliveredAt: null,
+        budget: 14500,
+        currency: `USD`,
+        description: `Flagship product reveal film with 3D robotics HUD overlays, kinetic typography, and broadcast stereo mix.`,
+        videoWorkflow: {
+          specs: `4K ProRes 422 HQ · 23.976fps · 16:9 + 9:16 Social`,
+          finalLookNotes: `High-contrast teal-amber filmic grade, sharp 4-frame whip cuts on drum transients, clean glassmorphic callout HUDs.`,
+          videoLinks: [
+            { label: `Assembly Cut v3`, url: `https://example.com/editflow/apex-cut-v3` },
+            { label: `3D HUD Pass`, url: `https://example.com/editflow/apex-hud-r2` }
+          ],
+          referenceClips: [
+            { label: `Pacing & Sound Design Ref`, url: `https://example.com/editflow/refs/pacing-spot`, note: `Match beat-sync pacing at 0:18–0:32` }
+          ]
+        },
+        checklist: [
+          { id: `chk-1`, label: `Picture Lock Approved`, tier: `Required`, done: true },
+          { id: `chk-2`, label: `DaVinci Color Grade Pass`, tier: `Required`, done: false },
+          { id: `chk-3`, label: `4K Master QC & Captions`, tier: `Required`, done: false }
+        ]
+      },
+      {
+        id: `PRJ-102`,
+        title: `Ceylon Botanicals — Heritage Docu-Ad`,
+        client: `Ceylon Botanicals`,
+        category: `Video`,
+        status: `review`,
+        adminOnly: false,
+        assignedMemberIds: [`USR-MGR`, `USR-NETHMI`, `USR-MAYA`],
+        deliveryDeadline: `2026-11-25`,
+        approvedAt: null,
+        deliveredAt: null,
+        budget: 2450000,
+        currency: `LKR`,
+        description: `Origin story documentary ad filmed across Nuwara Eliya estates with warm natural film emulation.`,
+        videoWorkflow: {
+          specs: `4K H.265 + ProRes 422 · 25fps · 16:9`,
+          finalLookNotes: `Organic Kodak 2383 emulation, gentle mist highlights, acoustic ambient bed at -18 LUFS.`,
+          videoLinks: [
+            { label: `Fine Cut v2 (For Review)`, url: `https://example.com/editflow/ceylon-fine-v2` }
+          ],
+          referenceClips: [
+            { label: `Grade Lookbook`, url: `https://example.com/editflow/refs/botanical-grade`, note: `Keep skin tones warm and foliage rich` }
+          ]
+        },
+        checklist: [
+          { id: `chk-4`, label: `Picture Lock Approved`, tier: `Required`, done: true },
+          { id: `chk-5`, label: `Audio Loudness -14 LUFS`, tier: `Required`, done: true },
+          { id: `chk-6`, label: `Client Final Approval`, tier: `Required`, done: false }
+        ]
+      },
+      {
+        id: `PRJ-103`,
+        title: `Nordic Soundwave — Brand Ident Pack`,
+        client: `Nordic Audio`,
+        category: `Motion/3D`,
+        status: `delivered`,
+        adminOnly: false,
+        assignedMemberIds: [`USR-MGR`, `USR-KASUN`, `USR-MAYA`],
+        deliveryDeadline: `2026-11-18`,
+        approvedAt: `2026-11-17`,
+        deliveredAt: `2026-11-18`,
+        budget: 7200,
+        currency: `EUR`,
+        description: `Modular 3D audio-reactive brand idents and broadcast stingers delivered for Q4 European campaign.`,
+        videoWorkflow: {
+          specs: `4K ProRes 4444 Alpha · 60fps`,
+          finalLookNotes: `Frosted glass refraction ripples synced to sub-bass pulse.`,
+          videoLinks: [
+            { label: `Final Master Pack (Delivered)`, url: `https://example.com/editflow/nordic-master-final` }
+          ],
+          referenceClips: []
+        },
+        checklist: [
+          { id: `chk-7`, label: `Alpha Channel Verification`, tier: `Required`, done: true },
+          { id: `chk-8`, label: `Final Approval & Delivery`, tier: `Required`, done: true }
+        ]
+      },
+      {
+        id: `PRJ-104`,
+        title: `Executive Investor Reel — Confidential`,
+        client: `Vanguard Capital`,
+        category: `Video`,
+        status: `in_progress`,
+        adminOnly: true,
+        assignedMemberIds: [`USR-ADMIN`, `USR-MGR`],
+        deliveryDeadline: `2026-12-05`,
+        approvedAt: null,
+        deliveredAt: null,
+        budget: 9500,
+        currency: `GBP`,
+        description: `Admin-governed investor briefing film with confidential portfolio metrics.`,
+        videoWorkflow: {
+          specs: `4K ProRes 422 · 24fps`,
+          finalLookNotes: `Minimalist graphite typography with crisp lower-thirds.`,
+          videoLinks: [{ label: `Rough Assembly`, url: `https://example.com/editflow/vanguard-r1` }],
+          referenceClips: []
+        },
+        checklist: [
+          { id: `chk-9`, label: `NDA Asset Watermark Check`, tier: `Required`, done: true }
+        ]
+      }
+    ],
+    tasks: [
+      { id: `TSK-201`, projectId: `PRJ-101`, title: `DaVinci Resolve hero reel color grade pass`, assigneeId: `USR-NETHMI`, status: `in_progress`, priority: `urgent`, dueDate: `2026-11-25`, estimateHrs: 8, adminOnly: false },
+      { id: `TSK-202`, projectId: `PRJ-101`, title: `Blender 3D robotic telemetry HUD animation`, assigneeId: `USR-KASUN`, status: `review`, priority: `high`, dueDate: `2026-11-26`, estimateHrs: 10, adminOnly: false },
+      { id: `TSK-203`, projectId: `PRJ-102`, title: `Final dialogue cleanup & ambient forest mix`, assigneeId: `USR-MAYA`, status: `review`, priority: `high`, dueDate: `2026-11-24`, estimateHrs: 5, adminOnly: false },
+      { id: `TSK-204`, projectId: `PRJ-102`, title: `Export 9:16 Reels & YouTube 4K masters`, assigneeId: `USR-NETHMI`, status: `todo`, priority: `medium`, dueDate: `2026-11-25`, estimateHrs: 4, adminOnly: false },
+      { id: `TSK-205`, projectId: `PRJ-103`, title: `Package ProRes 4444 stingers & stems`, assigneeId: `USR-KASUN`, status: `delivered`, priority: `medium`, dueDate: `2026-11-18`, estimateHrs: 6, adminOnly: false },
+      { id: `TSK-206`, projectId: `PRJ-104`, title: `Executive metric motion cards`, assigneeId: `USR-MGR`, status: `in_progress`, priority: `high`, dueDate: `2026-12-01`, estimateHrs: 6, adminOnly: true }
+    ],
+    timeLogs: [
+      { id: `LOG-501`, memberId: `USR-NETHMI`, projectId: `PRJ-101`, taskId: `TSK-201`, software: `DaVinci Resolve`, fileName: `Apex_Hero_Grade_v3.drp`, date: `2026-11-22`, seconds: 9425, status: `approved`, source: `timer` },
+      { id: `LOG-502`, memberId: `USR-KASUN`, projectId: `PRJ-101`, taskId: `TSK-202`, software: `Blender 3D`, fileName: `Apex_HUD_Comp_r4.blend`, date: `2026-11-22`, seconds: 11280, status: `approved`, source: `timer` },
+      { id: `LOG-503`, memberId: `USR-NETHMI`, projectId: `PRJ-102`, taskId: `TSK-204`, software: `Premiere Pro`, fileName: `Ceylon_DocuAd_Cut2.prproj`, date: `2026-11-21`, seconds: 5445, status: `approved`, source: `timer` },
+      { id: `LOG-504`, memberId: `USR-MAYA`, projectId: `PRJ-102`, taskId: `TSK-203`, software: `Pro Tools`, fileName: `Ceylon_Ambience_Mix.ptx`, date: `2026-11-21`, seconds: 4500, status: `pending`, source: `manual` },
+      { id: `LOG-505`, memberId: `USR-KASUN`, projectId: `PRJ-103`, taskId: `TSK-205`, software: `After Effects`, fileName: `Nordic_Ident_Master.aep`, date: `2026-11-18`, seconds: 7200, status: `approved`, source: `timer` },
+      { id: `LOG-506`, memberId: `USR-MGR`, projectId: `PRJ-101`, taskId: ``, software: `Premiere Pro`, fileName: `Apex_QC_Notes_Cut.prproj`, date: `2026-11-22`, seconds: 2715, status: `approved`, source: `timer` }
+    ],
+    invoices: [
+      { id: `INV-2026-01`, projectId: `PRJ-101`, client: `Apex Robotics`, currency: `USD`, amount: 14500, collected: 7250, dueDate: `2026-11-30`, status: `partial`, adminOnly: false },
+      { id: `INV-2026-02`, projectId: `PRJ-102`, client: `Ceylon Botanicals`, currency: `LKR`, amount: 2450000, collected: 1200000, dueDate: `2026-11-29`, status: `partial`, adminOnly: false },
+      { id: `INV-2026-03`, projectId: `PRJ-103`, client: `Nordic Audio`, currency: `EUR`, amount: 7200, collected: 7200, dueDate: `2026-11-20`, status: `paid`, adminOnly: false },
+      { id: `INV-2026-04`, projectId: `PRJ-104`, client: `Vanguard Capital`, currency: `GBP`, amount: 9500, collected: 0, dueDate: `2026-12-10`, status: `pending`, adminOnly: true }
+    ],
+    screenShares: {
+      "USR-NETHMI": {
+        active: true,
+        sessionCode: `EF-904-218`,
+        appTitle: `DaVinci Resolve 19 · Apex_Hero_Grade_v3.drp`,
+        resolution: `2560×1440`,
+        fps: 60,
+        latencyMs: 14,
+        bitrateMbps: 28,
+        remoteControlAllowed: true,
+        startedAt: `14:12 UTC`
+      },
+      "USR-KASUN": {
+        active: true,
+        sessionCode: `EF-441-872`,
+        appTitle: `Blender 4.2 · Apex_HUD_Comp_r4.blend`,
+        resolution: `1920×1080`,
+        fps: 60,
+        latencyMs: 19,
+        bitrateMbps: 22,
+        remoteControlAllowed: false,
+        startedAt: `15:05 UTC`
+      },
+      "USR-MAYA": {
+        active: false,
+        sessionCode: `EF-718-309`,
+        appTitle: `Pro Tools Studio · Idle`,
+        resolution: `1920×1080`,
+        fps: 30,
+        latencyMs: 32,
+        bitrateMbps: 15,
+        remoteControlAllowed: false,
+        startedAt: ``
+      }
+    },
+    auditLog: [
+      { ts: `2026-11-22 15:10`, actor: `Nethmi Fernando`, action: `Started live EditFlow screen share EF-904-218 (DaVinci Resolve)` },
+      { ts: `2026-11-22 14:40`, actor: `Sahan Silva`, action: `Approved exact time log LOG-501 (2h 37m 05s)` },
+      { ts: `2026-11-18 17:00`, actor: `Sahan Silva`, action: `Marked PRJ-103 Final Approved → moved to Delivery` }
+    ]
+  };
+}
+
+// =========================================================================
+// UTILITIES & CURRENCY / DURATION HELPERS
+// =========================================================================
+function escapeHtml(str) {
+  return String(str == null ? `` : str)
+    .replace(/&/g, `&amp;`)
+    .replace(/</g, `&lt;`)
+    .replace(/>/g, `&gt;`)
+    .replace(/"/g, `&quot;`)
+    .replace(/'/g, `&#39;`);
+}
+
+function getActiveUser() {
+  if (!appState || !Array.isArray(appState.users)) appState = buildDefaultState();
+  return appState.users.find(u => u.id === appState.activeUserId) || appState.users[1] || appState.users[0];
+}
+function isAdmin() { return getActiveUser().role === `admin`; }
+function isManagerOrAdmin() { const r = getActiveUser().role; return r === `admin` || r === `manager`; }
+
+function canViewUserRecord(userObj) {
+  const me = getActiveUser();
+  if (me.role === `admin` || me.role === `manager`) return true;
+  return userObj.id === me.id;
+}
+
+function getVisibleUsers() {
+  return appState.users.filter(u => canViewUserRecord(u));
+}
+
+function getVisibleProjects() {
+  const me = getActiveUser();
+  if (me.role === `admin`) return appState.projects;
+  if (me.role === `manager`) return appState.projects.filter(p => !p.adminOnly);
+  if (me.role === `client`) return appState.projects.filter(p => !p.adminOnly && p.client === me.company);
+  return appState.projects.filter(p => !p.adminOnly && (p.assignedMemberIds || []).includes(me.id));
+}
+
+function getVisibleTasks() {
+  const me = getActiveUser();
+  const visProjIds = new Set(getVisibleProjects().map(p => p.id));
+  if (me.role === `admin`) return appState.tasks;
+  if (me.role === `manager`) return appState.tasks.filter(t => !t.adminOnly && visProjIds.has(t.projectId));
+  return appState.tasks.filter(t => t.assigneeId === me.id && visProjIds.has(t.projectId));
+}
+
+function getVisibleTimeLogs() {
+  const me = getActiveUser();
+  if (me.role === `admin`) return appState.timeLogs;
+  if (me.role === `manager`) {
+    const visProjIds = new Set(getVisibleProjects().map(p => p.id));
+    return appState.timeLogs.filter(l => visProjIds.has(l.projectId));
+  }
+  return appState.timeLogs.filter(l => l.memberId === me.id);
+}
+
+function getVisibleInvoices() {
+  if (!isManagerOrAdmin()) return [];
+  if (isAdmin()) return appState.invoices;
+  return appState.invoices.filter(i => !i.adminOnly);
+}
+
+function getLogSeconds(log) {
+  if (typeof log.seconds === `number` && !Number.isNaN(log.seconds)) return Math.max(0, Math.round(log.seconds));
+  if (typeof log.minutes === `number` && !Number.isNaN(log.minutes)) return Math.max(0, Math.round(log.minutes * 60));
+  return 0;
+}
+
+function formatDurationExact(totalSeconds) {
+  const s = Math.max(0, Math.round(totalSeconds || 0));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const rem = s % 60;
+  return `${h}h ${String(m).padStart(2, `0`)}m ${String(rem).padStart(2, `0`)}s`;
+}
+
+function formatStopwatch(totalSeconds) {
+  const s = Math.max(0, Math.floor(totalSeconds || 0));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const rem = s % 60;
+  return `${String(h).padStart(2, `0`)}:${String(m).padStart(2, `0`)}:${String(rem).padStart(2, `0`)}`;
+}
+
+function convertCurrency(amount, fromCode, toCode) {
+  const from = CURRENCY_CATALOG[fromCode] || CURRENCY_CATALOG.USD;
+  const to = CURRENCY_CATALOG[toCode] || CURRENCY_CATALOG.USD;
+  const usdVal = Number(amount || 0) * from.rateToUsd;
+  return usdVal / to.rateToUsd;
+}
+
+function formatMoney(amount, currencyCode) {
+  const cur = CURRENCY_CATALOG[currencyCode] || CURRENCY_CATALOG.USD;
+  const val = Number(amount || 0);
+  const decimals = currencyCode === `LKR` || currencyCode === `INR` ? 0 : 0;
+  return `${cur.symbol}${val.toLocaleString(`en-US`, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })} ${cur.code}`;
+}
+
+function setDisplayCurrency(code) {
+  if (!CURRENCY_CATALOG[code]) return;
+  appState.displayCurrency = code;
+  persistState();
+  renderAll();
+}
+
+function statusBadgeClass(status) {
+  if ([`delivered`, `approved`, `paid`, `online`].includes(status)) return `badge-success`;
+  if ([`review`, `partial`, `pending`, `focus`].includes(status)) return `badge-warning`;
+  if ([`rejected`, `urgent`].includes(status)) return `badge-danger`;
+  if ([`in_progress`, `high`].includes(status)) return `badge-info`;
+  return `badge-neutral`;
+}
+
+function statusLabel(status) {
+  const map = {
+    todo: `To Do`, in_progress: `In Progress`, review: `Client / QC Review`, delivered: `Delivered`,
+    approved: `Approved`, pending: `Pending`, rejected: `Rejected`,
+    paid: `Paid`, partial: `Partial`,
+    online: `Online`, focus: `In Focus`, offline: `Offline`
+  };
+  return map[status] || status;
+}
+
+function presenceDotHtml(p) {
+  const cls = p === `online` ? `presence-online` : p === `focus` ? `presence-focus` : `presence-offline`;
+  return `<span class="presence-dot ${cls}" aria-hidden="true"></span>`;
+}
+
+function calcProjectReadiness(proj) {
+  const list = proj.checklist || [];
+  if (!list.length) return { pct: proj.status === `delivered` ? 100 : 0, done: 0, total: 0 };
+  const done = list.filter(c => c.done).length;
+  return { pct: Math.round((done / list.length) * 100), done, total: list.length };
+}
+
+function addAuditEntry(action) {
+  const me = getActiveUser();
+  appState.auditLog.unshift({ ts: `2026-11-23 09:30`, actor: me.name, action });
+  if (appState.auditLog.length > 40) appState.auditLog.length = 40;
+}
+
+async function persistState() {
+  try {
+    if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === `function`) {
+      await window.notebookAppApi.setAppState(appState);
+    }
+  } catch (err) {}
+}
+
+function showToast(msg, type) {
+  const stack = document.getElementById(`toast-stack`);
+  if (!stack) return;
+  const t = document.createElement(`div`);
+  t.className = `toast ${type === `error` ? `is-error` : type === `warn` ? `is-warn` : ``}`;
+  t.textContent = msg;
+  stack.appendChild(t);
+  setTimeout(() => { if (t.parentNode) t.parentNode.removeChild(t); }, 3600);
+}
+
+function copyTextToClipboard(text, label) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).catch(() => {});
+  }
+  showToast(`Copied ${label || `link`} to clipboard.`);
+}
+
+function refreshIcons() {
+  if (window.lucide && typeof window.lucide.createIcons === `function`) {
+    window.lucide.createIcons();
+  }
+}
+
+// =========================================================================
+// THEME, AUTHENTICATION & NAVIGATION
+// =========================================================================
+function applyActiveUserTheme() {
+  const me = getActiveUser();
+  const theme = (appState.userThemes && appState.userThemes[me.id]) || `aurora`;
+  if (theme === `aurora`) document.documentElement.removeAttribute(`data-theme`);
+  else document.documentElement.setAttribute(`data-theme`, theme);
+  const sel = document.getElementById(`theme-quick-select`);
+  if (sel) sel.value = theme;
+}
+
+function setUserTheme(theme) {
+  const me = getActiveUser();
+  if (!appState.userThemes) appState.userThemes = {};
+  appState.userThemes[me.id] = theme;
+  applyActiveUserTheme();
+  persistState();
+  renderSettingsView();
+  showToast(`Applied ${theme.replace(`_`, ` `)} Glass theme for ${me.name}.`);
+}
+
+function getNavItemsForRole(role) {
+  const base = [
+    { id: `dashboard`, label: `Dashboard`, icon: `layout-dashboard` }
+  ];
+  if (role === `admin`) {
+    base.push({ id: `analytics`, label: `Team Analytics`, icon: `bar-chart-3` });
+  }
+  if (role !== `client`) {
+    base.push({ id: `screen-share`, label: role === `member` ? `Screen Share` : `Screen Stream Viewer`, icon: `monitor-play` });
+  }
+  base.push(
+    { id: `projects`, label: `Task Manager`, icon: `clapperboard` },
+    { id: `project-overview`, label: `Delivery & Deadlines`, icon: `check-circle-2` }
+  );
+  if (role !== `client`) {
+    base.push({ id: `time-tracker`, label: role === `admin` ? `Time Oversight` : `Time Tracker`, icon: `timer` });
+  }
+  base.push({ id: `members`, label: `Team & Client Directory`, icon: `users` });
+  if (role === `admin` || role === `manager`) {
+    base.push({ id: `finance-tracker`, label: `Finance & Invoices`, icon: `wallet` });
+  }
+  base.push({ id: `settings`, label: `Glass UI Settings`, icon: `sliders` });
+  return base;
+}
+
+function renderSidebar() {
+  const me = getActiveUser();
+  const nav = document.getElementById(`nav-list`);
+  if (!nav) return;
+  const items = getNavItemsForRole(me.role);
+  const visTasks = getVisibleTasks().filter(t => t.status !== `delivered`).length;
+  const deliveredCount = getVisibleProjects().filter(p => p.status === `delivered`).length;
+  const liveStreams = Object.values(appState.screenShares || {}).filter(s => s.active).length;
+
+  nav.innerHTML = items.map(it => {
+    let badge = ``;
+    if (it.id === `projects`) badge = `<span class="nav-count">${visTasks}</span>`;
+    if (it.id === `project-overview`) badge = `<span class="nav-count">${deliveredCount}</span>`;
+    if (it.id === `screen-share` && isManagerOrAdmin()) badge = `<span class="nav-count">${liveStreams} live</span>`;
+    return `
+      <li>
+        <button type="button" class="nav-btn ${appState.activeView === it.id ? `is-active` : ``}" onclick="switchView('${it.id}')">
+          <span class="nav-btn-left"><i data-lucide="${it.icon}" aria-hidden="true"></i><span>${it.label}</span></span>
+          ${badge}
+        </button>
+      </li>
+    `;
+  }).join(``);
+
+  const note = document.getElementById(`role-footer-note`);
+  if (note) {
+    note.textContent = me.role === `admin`
+      ? `EditFlow Admin · Verified`
+      : me.role === `manager`
+        ? `EditFlow Manager · Ops & Finance`
+        : me.role === `client`
+          ? `EditFlow Client Portal`
+          : `EditFlow Member · Self-Scoped`;
+  }
+  refreshIcons();
+}
+
+function renderTopbarControls() {
+  const me = getActiveUser();
+  const wrap = document.getElementById(`topbar-user-controls`);
+  const pill = document.getElementById(`rbac-scope-pill`);
+  const scopeText = document.getElementById(`rbac-scope-text`);
+
+  if (pill && scopeText) {
+    pill.classList.toggle(`is-restricted`, me.role === `member` || me.role === `client`);
+    scopeText.textContent = me.role === `admin`
+      ? `Admin · Unlocked`
+      : me.role === `manager`
+        ? `Manager · Ops + Finance`
+        : me.role === `client`
+          ? `Client · Project View`
+          : `Member · ${me.name}`;
+  }
+
+  if (!wrap) return;
+  const sec = getElapsedTimerSeconds();
+  const timerText = timerState.running ? `${timerState.paused ? `Paused` : `Live`} · ${formatStopwatch(sec)}` : `Timer Idle`;
+
+  wrap.innerHTML = `
+    ${me.role !== `admin` && me.role !== `client` ? `
+      <button type="button" class="live-timer-pill ${timerState.running ? `` : `is-idle`}" onclick="switchView('time-tracker')">
+        <i data-lucide="timer" aria-hidden="true"></i>
+        <span id="topbar-timer-text">${timerText}</span>
+      </button>
+    ` : ``}
+    <div class="user-switcher-pill">
+      <label for="presence-quick-select" class="user-switcher-label">My Status:</label>
+      <select id="presence-quick-select" class="user-switcher-select" onchange="updateOwnPresence(this.value)">
+        <option value="online" ${me.presence === `online` ? `selected` : ``}>Online</option>
+        <option value="focus" ${me.presence === `focus` ? `selected` : ``}>In Focus</option>
+        <option value="offline" ${me.presence === `offline` ? `selected` : ``}>Offline</option>
+      </select>
+    </div>
+    <div class="user-switcher-pill">
+      <label for="user-switcher" class="user-switcher-label">Account:</label>
+      <select id="user-switcher" class="user-switcher-select" onchange="handleUserSwitchAttempt(this.value)">
+        ${appState.users.map(u => `
+          <option value="${escapeHtml(u.id)}" ${u.id === me.id ? `selected` : ``}>${escapeHtml(u.name)} (${u.role.toUpperCase()})</option>
+        `).join(``)}
+      </select>
+    </div>
+  `;
+  refreshIcons();
+}
+
+function updateOwnPresence(newPresence) {
+  const me = getActiveUser();
+  me.presence = newPresence;
+  addAuditEntry(`${me.name} updated own presence to ${statusLabel(newPresence)}`);
+  persistState();
+  renderAll();
+  showToast(`Your presence is now ${statusLabel(newPresence)}.`);
+}
+
+function handleUserSwitchAttempt(targetUserId) {
+  const target = appState.users.find(u => u.id === targetUserId);
+  if (!target) return;
+  if (target.role === `admin` && !adminSessionUnlocked) {
+    pendingAdminSwitchId = targetUserId;
+    const sel = document.getElementById(`user-switcher`);
+    if (sel) sel.value = appState.activeUserId;
+    openAdminAuthModal();
+    return;
+  }
+  completeUserSwitch(targetUserId);
+}
+
+function openAdminAuthModal() {
+  openModal(`EditFlow Admin Authentication`, `
+    <div style="display:flex;flex-direction:column;gap:var(--space-md);">
+      <p class="muted-text" style="margin:0;font-size:0.9rem;">
+        Switching to an <strong>EditFlow Admin</strong> account requires password verification.
+      </p>
+      <div class="checklist-row">
+        <span>Demo Credentials</span>
+        <span class="mono">Username: <strong>admin</strong> · Password: <strong>1234</strong></span>
+      </div>
+      <div class="form-grid-2">
+        <div class="field">
+          <label for="auth-admin-user">Username</label>
+          <input id="auth-admin-user" type="text" class="input" value="admin" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="auth-admin-pass">Password</label>
+          <input id="auth-admin-pass" type="password" class="input" placeholder="Enter password (1234)" onkeydown="if(event.key==='Enter'){verifyAdminAuth();}">
+        </div>
+      </div>
+      <div id="auth-admin-error" class="form-error" style="display:none;"></div>
+      <div style="display:flex;justify-content:flex-end;gap:var(--space-sm);">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="verifyAdminAuth()">Verify &amp; Enter Admin</button>
+      </div>
+    </div>
+  `);
+  setTimeout(() => {
+    const inp = document.getElementById(`auth-admin-pass`);
+    if (inp) inp.focus();
+  }, 40);
+}
+
+function verifyAdminAuth() {
+  const userEl = document.getElementById(`auth-admin-user`);
+  const passEl = document.getElementById(`auth-admin-pass`);
+  const errEl = document.getElementById(`auth-admin-error`);
+  const uVal = (userEl ? userEl.value : ``).trim().toLowerCase();
+  const pVal = passEl ? passEl.value : ``;
+  if (uVal !== `admin` || pVal !== `1234`) {
+    if (errEl) {
+      errEl.textContent = `Invalid credentials. Use Username: admin and Password: 1234.`;
+      errEl.style.display = `block`;
+    }
+    return;
+  }
+  adminSessionUnlocked = true;
+  const targetId = pendingAdminSwitchId || `USR-ADMIN`;
+  pendingAdminSwitchId = null;
+  closeModal();
+  completeUserSwitch(targetId);
+  showToast(`EditFlow Admin access unlocked.`);
+}
+
+function completeUserSwitch(targetUserId) {
+  appState.activeUserId = targetUserId;
+  const me = getActiveUser();
+  const allowed = getNavItemsForRole(me.role).map(i => i.id);
+  if (!allowed.includes(appState.activeView)) appState.activeView = `dashboard`;
+  applyActiveUserTheme();
+  persistState();
+  renderAll();
+  showToast(`Switched to ${me.name} (${me.role.toUpperCase()}).`);
+}
+
+function switchView(viewId) {
+  const me = getActiveUser();
+  const allowed = getNavItemsForRole(me.role).map(i => i.id);
+  if (!allowed.includes(viewId)) {
+    showToast(`Your role (${me.role}) cannot access that section.`, `error`);
+    return;
+  }
+  appState.activeView = viewId;
+  toggleMobileDrawer(false);
+  persistState();
+  renderAll();
+}
+
+function toggleMobileDrawer(open) {
+  const sb = document.getElementById(`sidebar`);
+  const ov = document.getElementById(`drawer-overlay`);
+  if (sb) sb.classList.toggle(`is-open`, open);
+  if (ov) ov.classList.toggle(`is-open`, open);
+}
+
+function handleGlobalSearch(val) {
+  appState.searchQuery = val.trim().toLowerCase();
+  renderActiveView();
+}
+
+function renderBarChart(containerId, items, seriesClass) {
+  const box = document.getElementById(containerId);
+  if (!box) return;
+  const maxVal = Math.max(1, ...items.map(i => i.val));
+  box.innerHTML = items.map(it => {
+    const pct = Math.round((it.val / maxVal) * 100);
+    return `
+      <div class="bar-row">
+        <span style="font-size:0.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(it.label)}</span>
+        <div class="bar-track"><div class="bar-fill ${seriesClass || `bar-series-1`}" style="width:${pct}%;"></div></div>
+        <span class="mono" style="text-align:right;font-size:0.8rem;">${it.display || formatDurationExact(it.val)}</span>
+      </div>
+    `;
+  }).join(``) || `<div class="empty-state">No data available in this scope.</div>`;
+}
+
+// =========================================================================
+// 1. DASHBOARD
+// =========================================================================
+function renderDashboardView() {
+  const me = getActiveUser();
+  const visProjects = getVisibleProjects();
+  const visTasks = getVisibleTasks();
+  const visLogs = getVisibleTimeLogs();
+  const visUsers = getVisibleUsers();
+  const dispCur = appState.displayCurrency || `USD`;
+
+  const subtitle = document.getElementById(`dashboard-subtitle`);
+  const actions = document.getElementById(`dashboard-header-actions`);
+  const kpiWrap = document.getElementById(`dashboard-kpis`);
+  const panels = document.getElementById(`dashboard-dynamic-panels`);
+
+  if (subtitle) {
+    subtitle.textContent = me.role === `admin`
+      ? `EditFlow Executive Oversight · Team time analytics, live remote streams, and multi-currency studio finance.`
+      : me.role === `manager`
+        ? `EditFlow Operations · Assign tasks, inspect member screen streams, manage invoices, and approve final deliveries.`
+        : me.role === `client`
+          ? `EditFlow Client Portal · Track deliverables, review video links, and monitor approval milestones.`
+          : `EditFlow Workspace · Your assigned tasks, exact-second live stopwatch, and screen share controls.`;
+  }
+
+  if (actions) {
+    let btns = ``;
+    if (isManagerOrAdmin()) {
+      btns += `<button type="button" class="btn btn-outline" onclick="switchView('screen-share')"><i data-lucide="monitor-play" aria-hidden="true"></i>View Screen Streams</button>`;
+      btns += `<button type="button" class="btn btn-primary" onclick="openNewTaskModal()"><i data-lucide="plus" aria-hidden="true"></i>Assign Task</button>`;
+    } else if (me.role === `member`) {
+      btns += `<button type="button" class="btn btn-outline" onclick="switchView('screen-share')"><i data-lucide="monitor-up" aria-hidden="true"></i>Share Screen</button>`;
+      btns += `<button type="button" class="btn btn-primary" onclick="switchView('time-tracker')"><i data-lucide="play" aria-hidden="true"></i>Live Stopwatch</button>`;
+    }
+    actions.innerHTML = btns;
+  }
+
+  const totalApprovedSecs = visLogs.filter(l => l.status === `approved`).reduce((a, l) => a + getLogSeconds(l), 0);
+  const deliveredCount = visProjects.filter(p => p.status === `delivered`).length;
+  const openTasks = visTasks.filter(t => t.status !== `delivered`).length;
+  const liveStreams = Object.values(appState.screenShares || {}).filter(s => s.active).length;
+
+  let kpiHtml = `
+    <div class="kpi-card"><span class="kpi-label">Visible Projects</span><span class="kpi-val">${visProjects.length}</span><span class="kpi-delta">${deliveredCount} final approved &amp; delivered</span></div>
+    <div class="kpi-card"><span class="kpi-label">${me.role === `member` ? `My Open Tasks` : `Active Tasks`}</span><span class="kpi-val">${openTasks}</span><span class="kpi-delta">${visTasks.filter(t => t.status === `review`).length} in review</span></div>
+    <div class="kpi-card"><span class="kpi-label">${me.role === `admin` ? `Team Tracked Time` : `Approved Time`}</span><span class="kpi-val">${formatDurationExact(totalApprovedSecs)}</span><span class="kpi-delta">${visLogs.filter(l => l.status === `pending`).length} pending approval</span></div>
+  `;
+
+  if (isManagerOrAdmin()) {
+    const visInvoices = getVisibleInvoices();
+    const paidConverted = visInvoices.reduce((a, i) => a + convertCurrency(i.collected, i.currency, dispCur), 0);
+    const totalConverted = visInvoices.reduce((a, i) => a + convertCurrency(i.amount, i.currency, dispCur), 0);
+    kpiHtml += `<div class="kpi-card"><span class="kpi-label">Paid Revenue (${dispCur})</span><span class="kpi-val">${formatMoney(paidConverted, dispCur)}</span><span class="kpi-delta">of ${formatMoney(totalConverted, dispCur)} invoiced</span></div>`;
+  } else {
+    kpiHtml += `<div class="kpi-card"><span class="kpi-label">My Presence</span><span class="kpi-val">${statusLabel(me.presence)}</span><span class="kpi-delta">${escapeHtml(me.timezone)}</span></div>`;
+  }
+  if (kpiWrap) kpiWrap.innerHTML = kpiHtml;
+
+  if (!panels) return;
+  const teamPresenceCards = isManagerOrAdmin() ? `
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Live Team Presence &amp; Active Streams</h2>
+        <span class="badge badge-info">${liveStreams} Live Screen Shares</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--space-xs);">
+        ${visUsers.filter(u => u.role !== `client`).map(u => {
+          const st = appState.screenShares && appState.screenShares[u.id];
+          return `
+            <div class="checklist-row">
+              <div style="display:flex;align-items:center;gap:var(--space-sm);">
+                ${presenceDotHtml(u.presence)}
+                <div>
+                  <strong>${escapeHtml(u.name)}</strong>
+                  <div class="small-label">${escapeHtml(u.title)}</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:var(--space-xs);">
+                ${st && st.active ? `<button type="button" class="btn btn-outline btn-sm" onclick="viewMemberStream('${escapeHtml(u.id)}')">Watch Screen</button>` : ``}
+                <span class="badge ${statusBadgeClass(u.presence)}">${statusLabel(u.presence)}</span>
+              </div>
+            </div>
+          `;
+        }).join(``)}
+      </div>
+    </div>
+  ` : ``;
+
+  const myTasksPanel = `
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">${me.role === `member` ? `My Assigned EditFlow Tasks` : `Active Studio Deliverables`}</h2>
+        <button type="button" class="btn btn-outline btn-sm" onclick="switchView('projects')">Open Task Manager</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--space-xs);">
+        ${visTasks.slice(0, 5).map(t => {
+          const owner = appState.users.find(u => u.id === t.assigneeId);
+          return `
+            <div class="checklist-row">
+              <div>
+                <strong>${escapeHtml(t.title)}</strong>
+                <div class="small-label">${escapeHtml(t.projectId)} · ${owner ? escapeHtml(owner.name) : `Unassigned`} · Due ${escapeHtml(t.dueDate)}</div>
+              </div>
+              <span class="badge ${statusBadgeClass(t.status)}">${statusLabel(t.status)}</span>
+            </div>
+          `;
+        }).join(``) || `<div class="empty-state">No active tasks in your queue.</div>`}
+      </div>
+    </div>
+  `;
+
+  panels.innerHTML = `<div class="split-grid-2">${myTasksPanel}${teamPresenceCards}</div>`;
+  refreshIcons();
+}
+
+// =========================================================================
+// 2. TEAM ANALYTICS (ADMIN ONLY)
+// =========================================================================
+function renderAnalyticsView() {
+  if (!isAdmin()) return;
+
+  const regF = (document.getElementById(`filter-analytics-region`) || {}).value || `all`;
+  const prjSel = document.getElementById(`filter-analytics-project`);
+  if (prjSel) {
+    const cur = prjSel.value || `all`;
+    prjSel.innerHTML = `<option value="all">All Projects</option>` + appState.projects.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.id)} · ${escapeHtml(p.title)}</option>`).join(``);
+    prjSel.value = appState.projects.some(p => p.id === cur) ? cur : `all`;
+  }
+  const curSel = document.getElementById(`filter-analytics-currency`);
+  if (curSel) {
+    curSel.innerHTML = Object.values(CURRENCY_CATALOG).map(c => `<option value="${c.code}" ${c.code === appState.displayCurrency ? `selected` : ``}>${c.code} (${c.symbol})</option>`).join(``);
+  }
+
+  const prjF = prjSel ? prjSel.value : `all`;
+  const dispCur = appState.displayCurrency || `USD`;
+
+  const members = appState.users.filter(u => u.role !== `client` && (regF === `all` || u.region === regF));
+  const mIds = new Set(members.map(m => m.id));
+  const logs = appState.timeLogs.filter(l => mIds.has(l.memberId) && (prjF === `all` || l.projectId === prjF));
+  const approvedLogs = logs.filter(l => l.status === `approved`);
+
+  const totalSecs = approvedLogs.reduce((a, l) => a + getLogSeconds(l), 0);
+  const pendingSecs = logs.filter(l => l.status === `pending`).reduce((a, l) => a + getLogSeconds(l), 0);
+  const labourUsd = approvedLogs.reduce((a, l) => {
+    const u = appState.users.find(x => x.id === l.memberId);
+    return a + (getLogSeconds(l) / 3600) * (u ? u.hourlyRate : 0);
+  }, 0);
+
+  const kpis = document.getElementById(`analytics-kpis`);
+  if (kpis) {
+    kpis.innerHTML = `
+      <div class="kpi-card"><span class="kpi-label">Team Approved Hours</span><span class="kpi-val">${formatDurationExact(totalSecs)}</span><span class="kpi-delta">${approvedLogs.length} approved logs</span></div>
+      <div class="kpi-card"><span class="kpi-label">Pending Review</span><span class="kpi-val">${formatDurationExact(pendingSecs)}</span><span class="kpi-delta">${logs.filter(l => l.status === `pending`).length} entries</span></div>
+      <div class="kpi-card"><span class="kpi-label">Online / In Focus</span><span class="kpi-val">${members.filter(m => m.presence !== `offline`).length} / ${members.length}</span><span class="kpi-delta">Self-managed member presence</span></div>
+      <div class="kpi-card"><span class="kpi-label">Est. Labour Cost (${dispCur})</span><span class="kpi-val">${formatMoney(convertCurrency(labourUsd, `USD`, dispCur), dispCur)}</span><span class="kpi-delta">Converted at studio rate</span></div>
+    `;
+  }
+
+  const memberBars = members.map(m => ({
+    label: m.name,
+    val: approvedLogs.filter(l => l.memberId === m.id).reduce((a, l) => a + getLogSeconds(l), 0)
+  })).sort((a, b) => b.val - a.val);
+  renderBarChart(`analytics-member-chart`, memberBars, `bar-series-1`);
+
+  const projBars = appState.projects.map(p => ({
+    label: p.id,
+    val: approvedLogs.filter(l => l.projectId === p.id).reduce((a, l) => a + getLogSeconds(l), 0)
+  }));
+  renderBarChart(`analytics-project-chart`, projBars, `bar-series-2`);
+
+  const lkSecs = approvedLogs.filter(l => { const u = appState.users.find(x => x.id === l.memberId); return u && u.region === `LK`; }).reduce((a, l) => a + getLogSeconds(l), 0);
+  const intlSecs = approvedLogs.filter(l => { const u = appState.users.find(x => x.id === l.memberId); return u && u.region === `INTL`; }).reduce((a, l) => a + getLogSeconds(l), 0);
+  renderBarChart(`analytics-region-chart`, [
+    { label: `Sri Lanka (LK)`, val: lkSecs },
+    { label: `International`, val: intlSecs }
+  ], `bar-series-3`);
+
+  renderBarChart(`analytics-status-chart`, [
+    { label: `Approved`, val: approvedLogs.length, display: `${approvedLogs.length} logs` },
+    { label: `Pending`, val: logs.filter(l => l.status === `pending`).length, display: `${logs.filter(l => l.status === `pending`).length} logs` },
+    { label: `Rejected`, val: logs.filter(l => l.status === `rejected`).length, display: `${logs.filter(l => l.status === `rejected`).length} logs` }
+  ], `bar-series-4`);
+
+  const mBody = document.getElementById(`analytics-member-tbody`);
+  if (mBody) {
+    mBody.innerHTML = members.map(m => {
+      const mLogs = logs.filter(l => l.memberId === m.id);
+      const appS = mLogs.filter(l => l.status === `approved`).reduce((a, l) => a + getLogSeconds(l), 0);
+      const penS = mLogs.filter(l => l.status === `pending`).reduce((a, l) => a + getLogSeconds(l), 0);
+      const openT = appState.tasks.filter(t => t.assigneeId === m.id && t.status !== `delivered`).length;
+      const topSw = mLogs[0] ? mLogs[0].software : (m.skills[0] || `—`);
+      const costDisp = convertCurrency((appS / 3600) * m.hourlyRate, `USD`, dispCur);
+      return `
+        <tr>
+          <td><strong>${escapeHtml(m.name)}</strong><div class="small-label">${escapeHtml(m.role)}</div></td>
+          <td><span class="badge ${statusBadgeClass(m.presence)}">${presenceDotHtml(m.presence)}${statusLabel(m.presence)}</span></td>
+          <td>${escapeHtml(m.region)}</td>
+          <td>${escapeHtml(m.employmentType.replace(`_`, ` `))}</td>
+          <td class="mono">${formatDurationExact(appS)}</td>
+          <td class="mono">${formatDurationExact(penS)}</td>
+          <td class="mono">${mLogs.length}</td>
+          <td class="mono">${openT}</td>
+          <td>${escapeHtml(topSw)}</td>
+          <td class="mono text-right">${formatMoney(costDisp, dispCur)}</td>
+        </tr>
+      `;
+    }).join(``);
+  }
+
+  const pBody = document.getElementById(`analytics-project-tbody`);
+  if (pBody) {
+    pBody.innerHTML = appState.projects.map(p => {
+      const pInvs = appState.invoices.filter(i => i.projectId === p.id);
+      const invTotal = pInvs.reduce((a, i) => a + convertCurrency(i.amount, i.currency, dispCur), 0);
+      const colTotal = pInvs.reduce((a, i) => a + convertCurrency(i.collected, i.currency, dispCur), 0);
+      const budgetConv = convertCurrency(p.budget, p.currency || `USD`, dispCur);
+      const pSecs = approvedLogs.filter(l => l.projectId === p.id).reduce((a, l) => a + getLogSeconds(l), 0);
+      const rd = calcProjectReadiness(p);
+      return `
+        <tr>
+          <td><strong>${escapeHtml(p.id)}</strong> · ${escapeHtml(p.title)}</td>
+          <td><span class="badge ${statusBadgeClass(p.status)}">${statusLabel(p.status)}</span></td>
+          <td class="mono">${formatMoney(budgetConv, dispCur)}</td>
+          <td class="mono">${formatMoney(invTotal, dispCur)}</td>
+          <td class="mono">${formatMoney(colTotal, dispCur)}</td>
+          <td class="mono">${formatMoney(Math.max(0, invTotal - colTotal), dispCur)}</td>
+          <td class="mono">${formatDurationExact(pSecs)}</td>
+          <td class="mono">${rd.pct}%</td>
+        </tr>
+      `;
+    }).join(``);
+  }
+}
+
+function exportAnalyticsCsv() {
+  const rows = [[`Member`, `Role`, `Region`, `Presence`, `ApprovedSeconds`, `ApprovedFormatted`]];
+  appState.users.filter(u => u.role !== `client`).forEach(u => {
+    const secs = appState.timeLogs.filter(l => l.memberId === u.id && l.status === `approved`).reduce((a, l) => a + getLogSeconds(l), 0);
+    rows.push([u.name, u.role, u.region, u.presence, String(secs), formatDurationExact(secs)]);
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, `""`)}"`).join(`,`)).join(`\n`);
+  if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === `function`) {
+    window.notebookAppApi.triggerFileDownload({ content: csv, contentType: `text/csv`, encoding: `UTF-8`, filename: `editflow_team_analytics.csv` });
+  }
+  showToast(`Exported editflow_team_analytics.csv`);
+}
+
+// =========================================================================
+// 3. SCREEN STREAM VIEWER & REMOTE DESK (ANYDESK / PARSEC STYLE)
+// =========================================================================
+function renderScreenShareView() {
+  const me = getActiveUser();
+  if (me.role === `client`) return;
+
+  const desc = document.getElementById(`screen-share-desc`);
+  const actions = document.getElementById(`screen-share-header-actions`);
+  const workspace = document.getElementById(`screen-share-workspace`);
+  if (!workspace) return;
+
+  const myShare = appState.screenShares[me.id] || {
+    active: false,
+    sessionCode: `EF-${me.id.slice(-3)}-100`,
+    appTitle: `Premiere Pro · Active Timeline`,
+    resolution: `1920×1080`,
+    fps: 60,
+    latencyMs: 16,
+    bitrateMbps: 24,
+    remoteControlAllowed: true,
+    startedAt: ``
+  };
+
+  if (desc) {
+    desc.textContent = isManagerOrAdmin()
+      ? `AnyDesk / Parsec style remote desk viewer. Inspect live member workstation streams, latency, FPS, and collaborate on timelines.`
+      : `Broadcast your live workstation screen to EditFlow Managers and Admins. Peer members cannot view your stream.`;
+  }
+
+  if (actions) {
+    actions.innerHTML = me.role !== `admin` ? `
+      <button type="button" class="btn ${myShare.active ? `btn-danger` : `btn-success`}" onclick="toggleMyScreenShare()">
+        <i data-lucide="${myShare.active ? `monitor-off` : `monitor-up`}" aria-hidden="true"></i>
+        ${myShare.active ? `Stop Sharing My Screen` : `Start Sharing My Screen`}
+      </button>
+    ` : `<span class="badge badge-info">Admin Stream Oversight · View-Only Governance</span>`;
+  }
+
+  // Own Screen Share Broadcaster Card (Members & Managers)
+  const broadcasterHtml = me.role !== `admin` ? `
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">My Workstation Screen Broadcast</h2>
+          <div class="small-label">Session ID: ${escapeHtml(myShare.sessionCode)} · Visible ONLY to Admin &amp; Manager</div>
+        </div>
+        <span class="badge ${myShare.active ? `badge-success` : `badge-neutral`}">${myShare.active ? `LIVE BROADCASTING` : `OFFLINE`}</span>
+      </div>
+      <div class="form-grid-2">
+        <div class="field">
+          <label for="my-stream-app">Shared Application / Timeline</label>
+          <input id="my-stream-app" type="text" class="input" value="${escapeHtml(myShare.appTitle)}" onchange="updateMyStreamMeta()">
+        </div>
+        <div class="field">
+          <label for="my-stream-res">Stream Quality</label>
+          <select id="my-stream-res" class="select" onchange="updateMyStreamMeta()">
+            <option value="2560×1440" ${myShare.resolution === `2560×1440` ? `selected` : ``}>2560×1440 · 60fps (Parsec Low-Latency)</option>
+            <option value="1920×1080" ${myShare.resolution === `1920×1080` ? `selected` : ``}>1920×1080 · 60fps</option>
+            <option value="3840×2160" ${myShare.resolution === `3840×2160` ? `selected` : ``}>3840×2160 · 30fps (Color Accurate)</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-sm);margin-top:var(--space-md);flex-wrap:wrap;">
+        <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.86rem;cursor:pointer;">
+          <input type="checkbox" id="my-stream-ctrl" ${myShare.remoteControlAllowed ? `checked` : ``} onchange="updateMyStreamMeta()">
+          Allow Manager / Admin remote cursor annotation
+        </label>
+        <button type="button" class="btn ${myShare.active ? `btn-danger-outline` : `btn-primary`} btn-sm" onclick="toggleMyScreenShare()">
+          ${myShare.active ? `End Broadcast` : `Go Live Now`}
+        </button>
+      </div>
+    </div>
+  ` : ``;
+
+  // STRICT RBAC: Only Admin and Manager can view members' active screen streams
+  if (!isManagerOrAdmin()) {
+    workspace.innerHTML = `
+      ${broadcasterHtml}
+      <div class="card">
+        <div class="empty-state">
+          <strong>Stream Viewer Restricted to Admin &amp; Manager</strong><br>
+          Per EditFlow security policy, team members can initiate and manage their own screen broadcast above, while only Admin and Manager roles can view active team screen streams.
+        </div>
+      </div>
+    `;
+    cancelStreamLoop();
+    refreshIcons();
+    return;
+  }
+
+  const streamMembers = appState.users.filter(u => u.role === `member` || (u.role === `manager` && u.id !== me.id));
+  if (!streamMembers.some(u => u.id === appState.selectedStreamMemberId)) {
+    appState.selectedStreamMemberId = streamMembers[0] ? streamMembers[0].id : ``;
+  }
+
+  const targetUser = streamMembers.find(u => u.id === appState.selectedStreamMemberId);
+  const targetStream = targetUser ? (appState.screenShares[targetUser.id] || { active: false, sessionCode: `EF-000`, appTitle: `Idle`, resolution: `1920×1080`, fps: 0, latencyMs: 0, bitrateMbps: 0 }) : null;
+
+  const rosterHtml = streamMembers.map(u => {
+    const st = appState.screenShares[u.id] || { active: false, sessionCode: `EF-OFF`, appTitle: `Offline` };
+    const isSel = u.id === appState.selectedStreamMemberId;
+    return `
+      <button type="button" class="checklist-row" style="width:100%;text-align:left;cursor:pointer;${isSel ? `border-color:var(--primary);background:var(--primary-container);` : ``}" onclick="viewMemberStream('${escapeHtml(u.id)}')">
+        <div style="display:flex;align-items:center;gap:var(--space-sm);">
+          ${presenceDotHtml(u.presence)}
+          <div>
+            <strong>${escapeHtml(u.name)}</strong>
+            <div class="small-label">${escapeHtml(st.active ? st.appTitle : `Stream Offline`)}</div>
+          </div>
+        </div>
+        <span class="badge ${st.active ? `badge-success` : `badge-neutral`}">${st.active ? `LIVE · ${escapeHtml(st.sessionCode)}` : `IDLE`}</span>
+      </button>
+    `;
+  }).join(``);
+
+  const viewerHtml = targetUser && targetStream ? `
+    <div class="stream-viewport">
+      <div class="stream-canvas-wrap">
+        <canvas id="remote-stream-canvas" class="stream-canvas"></canvas>
+      </div>
+      <div class="stream-hud">
+        <div style="display:flex;align-items:center;gap:var(--space-sm);flex-wrap:wrap;">
+          <span class="badge ${targetStream.active ? `badge-success` : `badge-neutral`}">${targetStream.active ? `LIVE STREAM` : `DISCONNECTED`}</span>
+          <strong>${escapeHtml(targetUser.name)}</strong>
+          <span class="mono small-label">${escapeHtml(targetStream.sessionCode)} · ${escapeHtml(targetStream.resolution)} @ ${targetStream.active ? targetStream.fps : 0}fps · ${targetStream.active ? targetStream.latencyMs : 0}ms</span>
+        </div>
+        <div style="display:flex;gap:var(--space-xs);flex-wrap:wrap;">
+          ${targetStream.active ? `
+            <button type="button" class="btn btn-outline btn-sm" onclick="showToast('Sent QC timestamp marker to ${escapeHtml(targetUser.name)}')">Drop QC Marker</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="showToast('${targetStream.remoteControlAllowed ? `Remote cursor annotation connected` : `View-only stream: member disabled remote cursor`}', '${targetStream.remoteControlAllowed ? `ok` : `warn`}')">
+              ${targetStream.remoteControlAllowed ? `Annotate Stream` : `View-Only`}
+            </button>
+          ` : `<span class="small-label">Waiting for member to start broadcast</span>`}
+        </div>
+      </div>
+    </div>
+  ` : `<div class="empty-state">Select a team member to inspect their screen stream.</div>`;
+
+  workspace.innerHTML = `
+    ${broadcasterHtml}
+    <div class="split-grid-asym">
+      <div class="card" style="padding:var(--space-md);">
+        <div class="card-header" style="margin-bottom:var(--space-sm);">
+          <h2 class="card-title">Remote Desk Stream Feed</h2>
+          <span class="badge badge-info">Parsec / AnyDesk Relay</span>
+        </div>
+        ${viewerHtml}
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Team Workstations</h2>
+          <span class="small-label">Click to Connect</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:var(--space-xs);">${rosterHtml}</div>
+      </div>
+    </div>
+  `;
+
+  startStreamCanvasLoop(targetUser, targetStream);
+  refreshIcons();
+}
+
+function toggleMyScreenShare() {
+  const me = getActiveUser();
+  if (me.role === `admin`) return;
+  if (!appState.screenShares[me.id]) {
+    appState.screenShares[me.id] = {
+      active: false,
+      sessionCode: `EF-${Math.floor(100 + Math.random() * 899)}-${Math.floor(100 + Math.random() * 899)}`,
+      appTitle: `Premiere Pro · Active Cut`,
+      resolution: `1920×1080`,
+      fps: 60,
+      latencyMs: 15,
+      bitrateMbps: 24,
+      remoteControlAllowed: true,
+      startedAt: ``
+    };
+  }
+  const st = appState.screenShares[me.id];
+  st.active = !st.active;
+  st.startedAt = st.active ? `Live Now` : ``;
+  addAuditEntry(`${me.name} ${st.active ? `started` : `stopped`} live screen stream (${st.sessionCode})`);
+  persistState();
+  renderAll();
+  showToast(st.active ? `Live screen broadcast started (${st.sessionCode}).` : `Screen broadcast stopped.`);
+}
+
+function updateMyStreamMeta() {
+  const me = getActiveUser();
+  const st = appState.screenShares[me.id];
+  if (!st) return;
+  const appInp = document.getElementById(`my-stream-app`);
+  const resSel = document.getElementById(`my-stream-res`);
+  const ctrlChk = document.getElementById(`my-stream-ctrl`);
+  if (appInp && appInp.value.trim()) st.appTitle = appInp.value.trim();
+  if (resSel) st.resolution = resSel.value;
+  if (ctrlChk) st.remoteControlAllowed = ctrlChk.checked;
+  persistState();
+  showToast(`Updated screen share stream settings.`);
+}
+
+function viewMemberStream(memberId) {
+  if (!isManagerOrAdmin()) return;
+  appState.selectedStreamMemberId = memberId;
+  appState.activeView = `screen-share`;
+  persistState();
+  renderAll();
+}
+
+function cancelStreamLoop() {
+  if (streamAnimId) {
+    cancelAnimationFrame(streamAnimId);
+    streamAnimId = null;
+  }
+}
+
+function startStreamCanvasLoop(targetUser, targetStream) {
+  cancelStreamLoop();
+  const canvas = document.getElementById(`remote-stream-canvas`);
+  if (!canvas || !targetStream) return;
+  const ctx = canvas.getContext(`2d`);
+  if (!ctx) return;
+
+  const styles = getComputedStyle(document.documentElement);
+  const bg = styles.getPropertyValue(`--background`).trim() || `#081316`;
+  const surf = styles.getPropertyValue(`--surface-container`).trim() || `#13252a`;
+  const pri = styles.getPropertyValue(`--primary`).trim() || `#5eead4`;
+  const pos = styles.getPropertyValue(`--positive`).trim() || `#6ee7b7`;
+  const warn = styles.getPropertyValue(`--warning`).trim() || `#fbbf24`;
+  const txt = styles.getPropertyValue(`--on-surface`).trim() || `#edf6f8`;
+  const muted = styles.getPropertyValue(`--on-surface-variant`).trim() || `#98b4bc`;
+
+  function drawFrame() {
+    const w = canvas.offsetWidth || 640;
+    const h = canvas.offsetHeight || 300;
+    if (canvas.width !== w) canvas.width = w;
+    if (canvas.height !== h) canvas.height = h;
+
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    if (!targetStream.active) {
+      ctx.fillStyle = muted;
+      ctx.font = `600 15px Instrument Sans, sans-serif`;
+      ctx.textAlign = `center`;
+      ctx.fillText(`${targetUser ? targetUser.name : `Member`} is not currently broadcasting`, w / 2, h / 2 - 8);
+      ctx.font = `12px Geist Mono, monospace`;
+      ctx.fillText(`Session ${targetStream.sessionCode} · Standby`, w / 2, h / 2 + 16);
+      return;
+    }
+
+    streamTick += 0.03;
+    // Simulated NLE workstation frame (preview monitor + timeline tracks + waveform)
+    ctx.fillStyle = surf;
+    ctx.fillRect(14, 14, w - 28, h - 28);
+
+    // Top NLE titlebar
+    ctx.fillStyle = pri;
+    ctx.globalAlpha = 0.16;
+    ctx.fillRect(14, 14, w - 28, 28);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = txt;
+    ctx.font = `600 12px Geist Mono, monospace`;
+    ctx.textAlign = `left`;
+    ctx.fillText(`EDITFLOW REMOTE DESK · ${targetStream.appTitle}`, 24, 32);
+
+    // Video Monitor Box
+    const monW = Math.max(180, (w - 56) * 0.56);
+    const monH = 128;
+    ctx.fillStyle = bg;
+    ctx.fillRect(24, 52, monW, monH);
+
+    // Animated color bars / waveform inside monitor
+    const barCount = 18;
+    const bw = (monW - 24) / barCount;
+    for (let i = 0; i < barCount; i++) {
+      const amp = 20 + Math.abs(Math.sin(streamTick * 1.8 + i * 0.45)) * 70;
+      ctx.fillStyle = i % 3 === 0 ? pri : i % 3 === 1 ? pos : warn;
+      ctx.globalAlpha = 0.78;
+      ctx.fillRect(36 + i * bw, 52 + monH - 16 - amp, Math.max(4, bw - 4), amp);
+    }
+    ctx.globalAlpha = 1;
+
+    // Color Scopes Panel on Right
+    const scopeX = 36 + monW;
+    const scopeW = Math.max(100, w - scopeX - 24);
+    ctx.fillStyle = bg;
+    ctx.fillRect(scopeX, 52, scopeW, monH);
+    ctx.strokeStyle = pri;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x = 0; x < scopeW - 16; x += 6) {
+      const y = 116 + Math.sin(streamTick * 2 + x * 0.06) * 28;
+      if (x === 0) ctx.moveTo(scopeX + 8 + x, y);
+      else ctx.lineTo(scopeX + 8 + x, y);
+    }
+    ctx.stroke();
+
+    // Timeline Tracks at Bottom
+    const tlY = 192;
+    const tlW = w - 48;
+    ctx.fillStyle = bg;
+    ctx.fillRect(24, tlY, tlW, 78);
+
+    const playheadX = 24 + ((streamTick * 42) % (tlW - 12));
+    ctx.fillStyle = pri;
+    ctx.globalAlpha = 0.45;
+    ctx.fillRect(32, tlY + 12, tlW * 0.65, 18);
+    ctx.fillStyle = pos;
+    ctx.fillRect(88, tlY + 38, tlW * 0.52, 18);
+    ctx.globalAlpha = 1;
+
+    // Moving Playhead
+    ctx.strokeStyle = warn;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(playheadX, tlY + 4);
+    ctx.lineTo(playheadX, tlY + 74);
+    ctx.stroke();
+
+    // Remote cursor indicator
+    const cx = 80 + Math.cos(streamTick * 0.9) * 45;
+    const cy = 110 + Math.sin(streamTick * 1.1) * 22;
+    ctx.fillStyle = txt;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    streamAnimId = requestAnimationFrame(drawFrame);
+  }
+
+  drawFrame();
+}
+
+// =========================================================================
+// 4. TASK MANAGER & VIDEO WORKFLOWS
+// =========================================================================
+function renderProjectsView() {
+  const me = getActiveUser();
+  const visProjects = getVisibleProjects();
+  const visTasks = getVisibleTasks();
+  const visUsers = getVisibleUsers();
+
+  const headerActions = document.getElementById(`projects-header-actions`);
+  if (headerActions) {
+    headerActions.innerHTML = isManagerOrAdmin()
+      ? `<button type="button" class="btn btn-outline" onclick="openProjectEditorModal()"><i data-lucide="folder-plus" aria-hidden="true"></i>New Project</button>
+         <button type="button" class="btn btn-primary" onclick="openNewTaskModal()"><i data-lucide="plus" aria-hidden="true"></i>Assign Task</button>`
+      : ``;
+  }
+
+  const dossierCount = document.getElementById(`projects-dossier-count`);
+  const dossierStrip = document.getElementById(`projects-dossier-strip`);
+  if (dossierCount) dossierCount.textContent = `${visProjects.length} visible projects`;
+  if (dossierStrip) {
+    dossierStrip.innerHTML = visProjects.map(p => {
+      const vw = p.videoWorkflow || { specs: ``, finalLookNotes: ``, videoLinks: [] };
+      return `
+        <article class="project-dossier-card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-xs);">
+            <div>
+              <div class="small-label">${escapeHtml(p.id)} · ${escapeHtml(p.client)}</div>
+              <strong style="font-size:0.98rem;">${escapeHtml(p.title)}</strong>
+            </div>
+            <span class="badge ${statusBadgeClass(p.status)}">${statusLabel(p.status)}</span>
+          </div>
+          <p style="margin:0;font-size:0.83rem;color:var(--on-surface-variant);">${escapeHtml(p.description)}</p>
+          <div class="look-notes-box">
+            <strong style="display:block;font-size:0.75rem;color:var(--on-surface);">Look &amp; Specs: ${escapeHtml(vw.specs)}</strong>
+            ${escapeHtml(vw.finalLookNotes)}
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:var(--space-xs);flex-wrap:wrap;margin-top:auto;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="openProjectBriefModal('${escapeHtml(p.id)}')">Video Links (${(vw.videoLinks || []).length})</button>
+            ${isManagerOrAdmin() && p.status !== `delivered` ? `
+              <button type="button" class="btn btn-success btn-sm" onclick="promoteProjectToDelivery('${escapeHtml(p.id)}', 'Task Manager')">Final Approval</button>
+            ` : `<span class="mono small-label">Due ${escapeHtml(p.deliveryDeadline)}</span>`}
+          </div>
+        </article>
+      `;
+    }).join(``) || `<div class="empty-state">No projects visible in your role scope.</div>`;
+  }
+
+  const fProj = document.getElementById(`filter-task-project`);
+  if (fProj) {
+    const cur = fProj.value || `all`;
+    fProj.innerHTML = `<option value="all">All Visible Projects</option>` + visProjects.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.id)} · ${escapeHtml(p.title)}</option>`).join(``);
+    fProj.value = visProjects.some(p => p.id === cur) ? cur : `all`;
+  }
+
+  const fMemWrap = document.getElementById(`filter-task-member-wrap`);
+  const fMem = document.getElementById(`filter-task-member`);
+  if (fMemWrap) fMemWrap.style.display = me.role === `member` ? `none` : `flex`;
+  if (fMem && me.role !== `member`) {
+    const cur = fMem.value || `all`;
+    fMem.innerHTML = `<option value="all">All Assignees</option>` + visUsers.filter(u => u.role !== `client`).map(u => `<option value="${escapeHtml(u.id)}">${escapeHtml(u.name)}</option>`).join(``);
+    fMem.value = visUsers.some(u => u.id === cur) ? cur : `all`;
+  }
+
+  const kw = ((document.getElementById(`filter-task-search`) || {}).value || appState.searchQuery || ``).toLowerCase();
+  const selP = fProj ? fProj.value : `all`;
+  const selM = fMem && me.role !== `member` ? fMem.value : `all`;
+  const selPr = (document.getElementById(`filter-task-priority`) || {}).value || `all`;
+  const mode = (document.getElementById(`projects-view-mode`) || {}).value || `kanban`;
+
+  const filtered = visTasks.filter(t => {
+    if (selP !== `all` && t.projectId !== selP) return false;
+    if (selM !== `all` && t.assigneeId !== selM) return false;
+    if (selPr !== `all` && t.priority !== selPr) return false;
+    if (kw && !`${t.title} ${t.projectId} ${t.id}`.toLowerCase().includes(kw)) return false;
+    return true;
+  });
+
+  const container = document.getElementById(`projects-workspace-container`);
+  if (!container) return;
+
+  if (mode === `table`) {
+    container.innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Task</th><th>Project</th><th>Assignee</th><th>Priority</th><th>Due Date</th><th>Status</th><th class="text-right">Advance</th></tr></thead>
+          <tbody>
+            ${filtered.map(t => {
+              const owner = appState.users.find(u => u.id === t.assigneeId);
+              return `
+                <tr>
+                  <td><strong>${escapeHtml(t.title)}</strong><div class="small-label">${escapeHtml(t.id)}</div></td>
+                  <td class="mono">${escapeHtml(t.projectId)}</td>
+                  <td>${owner ? `${presenceDotHtml(owner.presence)} ${escapeHtml(owner.name)}` : `—`}</td>
+                  <td><span class="badge ${statusBadgeClass(t.priority)}">${escapeHtml(t.priority)}</span></td>
+                  <td class="mono">${escapeHtml(t.dueDate)}</td>
+                  <td><span class="badge ${statusBadgeClass(t.status)}">${statusLabel(t.status)}</span></td>
+                  <td class="text-right">
+                    <select class="select" style="min-height:36px;width:auto;" onchange="moveTaskStatus('${escapeHtml(t.id)}', this.value)">
+                      <option value="todo" ${t.status === `todo` ? `selected` : ``}>To Do</option>
+                      <option value="in_progress" ${t.status === `in_progress` ? `selected` : ``}>In Progress</option>
+                      <option value="review" ${t.status === `review` ? `selected` : ``}>Review</option>
+                      <option value="delivered" ${t.status === `delivered` ? `selected` : ``}>Delivered</option>
+                    </select>
+                  </td>
+                </tr>
+              `;
+            }).join(``) || `<tr><td colspan="7">No tasks match your filter.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } else {
+    const cols = [
+      { id: `todo`, title: `To Do` },
+      { id: `in_progress`, title: `In Progress` },
+      { id: `review`, title: `Review / QC` },
+      { id: `delivered`, title: `Delivered` }
+    ];
+    container.innerHTML = `
+      <div class="kanban-board">
+        ${cols.map(col => {
+          const cards = filtered.filter(t => t.status === col.id);
+          return `
+            <div class="kanban-col" ondragover="event.preventDefault();this.classList.add('is-drag-over');" ondragleave="this.classList.remove('is-drag-over');" ondrop="handleKanbanDrop(event, '${col.id}', this)">
+              <div class="kanban-col-head"><span>${col.title}</span><span>${cards.length}</span></div>
+              ${cards.map(t => {
+                const owner = appState.users.find(u => u.id === t.assigneeId);
+                return `
+                  <div class="kanban-card" draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${escapeHtml(t.id)}')">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:var(--space-xs);">
+                      <span class="mono small-label">${escapeHtml(t.projectId)}</span>
+                      <span class="badge ${statusBadgeClass(t.priority)}">${escapeHtml(t.priority)}</span>
+                    </div>
+                    <strong style="font-size:0.92rem;">${escapeHtml(t.title)}</strong>
+                    <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.78rem;color:var(--on-surface-variant);">
+                      <span>${owner ? `${presenceDotHtml(owner.presence)} ${escapeHtml(owner.name)}` : `Unassigned`}</span>
+                      <span class="mono">${escapeHtml(t.dueDate)}</span>
+                    </div>
+                  </div>
+                `;
+              }).join(``) || `<div class="small-label" style="padding:var(--space-md);text-align:center;">Drop tasks here</div>`}
+            </div>
+          `;
+        }).join(``)}
+      </div>
+    `;
+  }
+  refreshIcons();
+}
+
+function handleKanbanDrop(ev, newStatus, colEl) {
+  ev.preventDefault();
+  if (colEl) colEl.classList.remove(`is-drag-over`);
+  const taskId = ev.dataTransfer ? ev.dataTransfer.getData(`text/plain`) : ``;
+  if (taskId) moveTaskStatus(taskId, newStatus);
+}
+
+function moveTaskStatus(taskId, newStatus) {
+  const t = appState.tasks.find(x => x.id === taskId);
+  if (!t) return;
+  t.status = newStatus;
+  addAuditEntry(`Moved task ${t.id} (${t.title}) to ${statusLabel(newStatus)}`);
+  persistState();
+  renderAll();
+}
+
+function promoteProjectToDelivery(projectId, sourceLabel) {
+  if (!isManagerOrAdmin()) return;
+  const proj = appState.projects.find(p => p.id === projectId);
+  if (!proj) return;
+  proj.status = `delivered`;
+  proj.approvedAt = `2026-11-23`;
+  proj.deliveredAt = `2026-11-23`;
+  (proj.checklist || []).forEach(c => { c.done = true; });
+  appState.tasks.filter(t => t.projectId === proj.id).forEach(t => { t.status = `delivered`; });
+  addAuditEntry(`Granted Final Approval to ${proj.id} via ${sourceLabel} → moved to Delivery`);
+  persistState();
+  renderAll();
+  showToast(`${proj.id} marked Final Approved & moved to Delivery.`);
+}
+
+function openProjectBriefModal(projectId) {
+  const proj = appState.projects.find(p => p.id === projectId);
+  if (!proj) return;
+  const vw = proj.videoWorkflow || { specs: ``, finalLookNotes: ``, videoLinks: [], referenceClips: [] };
+  const canEdit = isManagerOrAdmin();
+
+  openModal(`${proj.id} · ${proj.title}`, `
+    <div style="display:flex;flex-direction:column;gap:var(--space-md);">
+      <div class="field">
+        <label for="brief-description">Project Description</label>
+        <textarea id="brief-description" class="textarea" ${canEdit ? `` : `readonly`}>${escapeHtml(proj.description)}</textarea>
+      </div>
+      <div class="field">
+        <label for="brief-specs">Delivery &amp; Video Specs</label>
+        <input id="brief-specs" type="text" class="input" value="${escapeHtml(vw.specs)}" ${canEdit ? `` : `readonly`}>
+      </div>
+      <div class="field">
+        <label for="brief-look-notes">Final Video Look &amp; Direction</label>
+        <textarea id="brief-look-notes" class="textarea" ${canEdit ? `` : `readonly`}>${escapeHtml(vw.finalLookNotes)}</textarea>
+      </div>
+      <div>
+        <div class="small-label" style="margin-bottom:var(--space-xs);">Video Links</div>
+        <div style="display:flex;flex-direction:column;gap:var(--space-xs);">
+          ${(vw.videoLinks || []).map((vl, idx) => `
+            <div class="video-link-chip">
+              <span class="video-url-mono">${escapeHtml(vl.label)}: ${escapeHtml(vl.url)}</span>
+              <div style="display:flex;gap:var(--space-xs);">
+                <button type="button" class="btn btn-outline btn-sm" style="min-height:28px;" onclick="copyTextToClipboard('${escapeHtml(vl.url)}', '${escapeHtml(vl.label)}')">Copy</button>
+                ${canEdit ? `<button type="button" class="btn btn-danger-outline btn-sm" style="min-height:28px;" onclick="removeProjectMediaLink('${escapeHtml(proj.id)}', 'videoLinks', ${idx})">Remove</button>` : ``}
+              </div>
+            </div>
+          `).join(``) || `<div class="small-label">No video links attached.</div>`}
+        </div>
+        ${canEdit ? `
+          <div class="form-grid-2" style="margin-top:var(--space-sm);align-items:end;">
+            <div class="field"><label for="new-vlink-label">New Video Link Label</label><input id="new-vlink-label" type="text" class="input" placeholder="e.g., Master v4"></div>
+            <div class="field"><label for="new-vlink-url">Video URL</label><input id="new-vlink-url" type="text" class="input" placeholder="https://example.com/editflow/v4"></div>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" style="margin-top:var(--space-xs);" onclick="addProjectMediaLink('${escapeHtml(proj.id)}', 'videoLinks')">+ Add Video Link</button>
+        ` : ``}
+      </div>
+      ${canEdit ? `
+        <div style="display:flex;justify-content:flex-end;gap:var(--space-sm);">
+          <button type="button" class="btn btn-outline" onclick="closeModal()">Close</button>
+          <button type="button" class="btn btn-primary" onclick="saveProjectBriefDetails('${escapeHtml(proj.id)}')">Save Brief</button>
+        </div>
+      ` : ``}
+    </div>
+  `);
+}
+
+function saveProjectBriefDetails(projectId) {
+  const proj = appState.projects.find(p => p.id === projectId);
+  if (!proj) return;
+  const desc = document.getElementById(`brief-description`);
+  const specs = document.getElementById(`brief-specs`);
+  const look = document.getElementById(`brief-look-notes`);
+  if (desc) proj.description = desc.value.trim();
+  if (!proj.videoWorkflow) proj.videoWorkflow = { specs: ``, finalLookNotes: ``, videoLinks: [], referenceClips: [] };
+  if (specs) proj.videoWorkflow.specs = specs.value.trim();
+  if (look) proj.videoWorkflow.finalLookNotes = look.value.trim();
+  persistState();
+  closeModal();
+  renderAll();
+  showToast(`Saved brief for ${proj.id}.`);
+}
+
+function addProjectMediaLink(projectId, key) {
+  const proj = appState.projects.find(p => p.id === projectId);
+  if (!proj) return;
+  const lbl = ((document.getElementById(`new-vlink-label`) || {}).value || ``).trim();
+  const url = ((document.getElementById(`new-vlink-url`) || {}).value || ``).trim();
+  if (!lbl || !url) { showToast(`Provide label and URL.`, `error`); return; }
+  proj.videoWorkflow[key].push({ label: lbl, url });
+  persistState();
+  openProjectBriefModal(projectId);
+  renderProjectsView();
+}
+
+function removeProjectMediaLink(projectId, key, idx) {
+  const proj = appState.projects.find(p => p.id === projectId);
+  if (!proj) return;
+  proj.videoWorkflow[key].splice(idx, 1);
+  persistState();
+  openProjectBriefModal(projectId);
+  renderProjectsView();
+}
+
+function openProjectEditorModal() {
+  if (!isManagerOrAdmin()) return;
+  const members = appState.users.filter(u => u.role === `member` || u.role === `manager`);
+  openModal(`Create New EditFlow Project`, `
+    <div style="display:flex;flex-direction:column;gap:var(--space-md);">
+      <div class="form-grid-2">
+        <div class="field"><label for="np-title">Project Title</label><input id="np-title" type="text" class="input" placeholder="e.g., Horizon EV Commercial"></div>
+        <div class="field"><label for="np-client">Client Name</label><input id="np-client" type="text" class="input" placeholder="e.g., Horizon Motors"></div>
+        <div class="field"><label for="np-category">Category</label><select id="np-category" class="select"><option value="Video">Video</option><option value="Motion/3D">Motion/3D</option><option value="Graphic Design">Graphic Design</option><option value="Audio">Audio</option></select></div>
+        <div class="field"><label for="np-deadline">Final Delivery Deadline</label><input id="np-deadline" type="date" class="input" value="2026-12-12"></div>
+      </div>
+      <div class="field"><label for="np-desc">Project Description</label><textarea id="np-desc" class="textarea" placeholder="Scope and deliverables..."></textarea></div>
+      <div class="field"><label for="np-specs">Video Specs</label><input id="np-specs" type="text" class="input" value="4K ProRes 422 · 24fps"></div>
+      <div class="field"><label>Assign Members</label><div style="display:flex;flex-wrap:wrap;gap:var(--space-sm);">${members.map(u => `<label style="display:flex;align-items:center;gap:0.35rem;font-size:0.84rem;"><input type="checkbox" name="np-m" value="${escapeHtml(u.id)}" checked>${escapeHtml(u.name)}</label>`).join(``)}</div></div>
+      <div id="np-error" class="form-error" style="display:none;"></div>
+      <div style="display:flex;justify-content:flex-end;gap:var(--space-sm);">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveNewProject()">Create Project</button>
+      </div>
+    </div>
+  `);
+}
+
+function saveNewProject() {
+  const title = ((document.getElementById(`np-title`) || {}).value || ``).trim();
+  const client = ((document.getElementById(`np-client`) || {}).value || ``).trim();
+  const category = (document.getElementById(`np-category`) || {}).value || `Video`;
+  const deadline = (document.getElementById(`np-deadline`) || {}).value || `2026-12-12`;
+  const desc = ((document.getElementById(`np-desc`) || {}).value || ``).trim();
+  const specs = ((document.getElementById(`np-specs`) || {}).value || ``).trim();
+  const errEl = document.getElementById(`np-error`);
+  if (!title || !client) {
+    if (errEl) { errEl.textContent = `Provide project title and client.`; errEl.style.display = `block`; }
+    return;
+  }
+  const assigned = Array.from(document.querySelectorAll(`input[name="np-m"]:checked`)).map(c => c.value);
+  const newId = `PRJ-${101 + appState.projects.length}`;
+  appState.projects.unshift({
+    id: newId, title, client, category, status: `in_progress`, adminOnly: false,
+    assignedMemberIds: assigned, deliveryDeadline: deadline, approvedAt: null, deliveredAt: null,
+    budget: 8500, currency: `USD`, description: desc || `Production brief for ${title}.`,
+    videoWorkflow: { specs: specs || `4K ProRes 422 · 24fps`, finalLookNotes: `Studio standard finish.`, videoLinks: [], referenceClips: [] },
+    checklist: [{ id: `chk-${Date.now()}`, label: `Final QC & Delivery`, tier: `Required`, done: false }]
+  });
+  addAuditEntry(`Created project ${newId}: ${title}`);
+  persistState();
+  closeModal();
+  renderAll();
+  showToast(`Created ${newId}.`);
+}
+
+function openNewTaskModal(presetMemberId) {
+  if (!isManagerOrAdmin()) return;
+  const visProjects = getVisibleProjects();
+  const assignees = appState.users.filter(u => u.role === `member` || u.role === `manager`);
+  const defId = presetMemberId || (assignees.find(u => u.id === `USR-NETHMI`) ? `USR-NETHMI` : (assignees[0] ? assignees[0].id : ``));
+  openModal(`Assign Production Task`, `
+    <div style="display:flex;flex-direction:column;gap:var(--space-md);">
+      <div class="field"><label for="nt-title">Task Title</label><input id="nt-title" type="text" class="input" placeholder="e.g., Grade hero reel B & export 4K master"></div>
+      <div class="form-grid-2">
+        <div class="field"><label for="nt-project">Project</label><select id="nt-project" class="select">${visProjects.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.id)} · ${escapeHtml(p.title)}</option>`).join(``)}</select></div>
+        <div class="field"><label for="nt-assignee">Assign To Member</label><select id="nt-assignee" class="select">${assignees.map(u => `<option value="${escapeHtml(u.id)}" ${u.id === defId ? `selected` : ``}>${escapeHtml(u.name)} (${u.title})</option>`).join(``)}</select></div>
+        <div class="field"><label for="nt-priority">Priority</label><select id="nt-priority" class="select"><option value="medium">Medium</option><option value="high">High</option><option value="urgent">Urgent</option><option value="low">Low</option></select></div>
+        <div class="field"><label for="nt-due">Due Date</label><input id="nt-due" type="date" class="input" value="2026-11-30"></div>
+      </div>
+      <div id="nt-error" class="form-error" style="display:none;"></div>
+      <div style="display:flex;justify-content:flex-end;gap:var(--space-sm);">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveNewTask()">Create &amp; Assign Task</button>
+      </div>
+    </div>
+  `);
+}
+
+function saveNewTask() {
+  const title = ((document.getElementById(`nt-title`) || {}).value || ``).trim();
+  const projectId = (document.getElementById(`nt-project`) || {}).value;
+  const assigneeId = (document.getElementById(`nt-assignee`) || {}).value;
+  const priority = (document.getElementById(`nt-priority`) || {}).value || `medium`;
+  const dueDate = (document.getElementById(`nt-due`) || {}).value || `2026-11-30`;
+  const errEl = document.getElementById(`nt-error`);
+  if (!title) {
+    if (errEl) { errEl.textContent = `Task title is required.`; errEl.style.display = `block`; }
+    return;
+  }
+  const assignee = appState.users.find(u => u.id === assigneeId);
+  const proj = appState.projects.find(p => p.id === projectId);
+  if (proj && assigneeId && !proj.assignedMemberIds.includes(assigneeId)) proj.assignedMemberIds.push(assigneeId);
+  appState.tasks.unshift({
+    id: `TSK-${201 + appState.tasks.length}`,
+    projectId, title, assigneeId, status: `in_progress`, priority, dueDate, estimateHrs: 6, adminOnly: Boolean(proj && proj.adminOnly)
+  });
+  addAuditEntry(`Assigned task "${title}" to ${assignee ? assignee.name : assigneeId}`);
+  persistState();
+  closeModal();
+  renderAll();
+  showToast(`Assigned "${title}" to ${assignee ? assignee.name : `member`}.`);
+}
+
+// =========================================================================
+// 5. TIME TRACKER (EXACT SECONDS; ADMIN = OVERSIGHT ONLY)
+// =========================================================================
+function getElapsedTimerSeconds() {
+  if (!timerState.running) return 0;
+  const liveMs = timerState.paused ? 0 : Math.max(0, Date.now() - timerState.startTimeMs);
+  return Math.floor((timerState.accumulatedMs + liveMs) / 1000);
+}
+
+function renderTimeTrackerView() {
+  const me = getActiveUser();
+  const visUsers = getVisibleUsers().filter(u => u.role !== `client`);
+  const visProjects = getVisibleProjects();
+  const visLogs = getVisibleTimeLogs();
+
+  const headerActions = document.getElementById(`time-header-actions`);
+  if (headerActions) {
+    headerActions.innerHTML = me.role === `admin`
+      ? `<button type="button" class="btn btn-primary" onclick="switchView('analytics')"><i data-lucide="bar-chart-3" aria-hidden="true"></i>Open Team Analytics</button>`
+      : `<button type="button" class="btn btn-outline" onclick="openManualTimeModal()"><i data-lucide="clock" aria-hidden="true"></i>Add Manual Entry</button>`;
+  }
+
+  const heroCard = document.getElementById(`timer-hero-card`);
+  const adminBanner = document.getElementById(`admin-no-personal-timer-banner`);
+  if (heroCard) heroCard.style.display = me.role === `admin` ? `none` : `grid`;
+  if (adminBanner) adminBanner.style.display = me.role === `admin` ? `block` : `none`;
+
+  const tMember = document.getElementById(`timer-member`);
+  if (tMember && me.role !== `admin`) {
+    if (me.role === `member`) {
+      tMember.innerHTML = `<option value="${escapeHtml(me.id)}">${escapeHtml(me.name)} (You)</option>`;
+      tMember.value = me.id;
+      tMember.disabled = true;
+    } else {
+      const trackable = visUsers.filter(u => u.role !== `admin`);
+      tMember.disabled = false;
+      tMember.innerHTML = trackable.map(u => `<option value="${escapeHtml(u.id)}">${escapeHtml(u.name)}</option>`).join(``);
+      if (!timerState.memberId || !trackable.some(u => u.id === timerState.memberId)) timerState.memberId = me.id;
+      tMember.value = timerState.memberId;
+    }
+  }
+
+  const tSw = document.getElementById(`timer-software`);
+  if (tSw && tSw.options.length === 0) tSw.innerHTML = SOFTWARE_OPTIONS.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join(``);
+
+  const tProj = document.getElementById(`timer-project`);
+  if (tProj) {
+    const cur = tProj.value;
+    tProj.innerHTML = visProjects.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.id)} · ${escapeHtml(p.title)}</option>`).join(``);
+    if (visProjects.some(p => p.id === cur)) tProj.value = cur;
+  }
+  populateTimerTasks();
+
+  const fMemWrap = document.getElementById(`filter-time-member-wrap`);
+  const fMem = document.getElementById(`filter-time-member`);
+  if (fMemWrap) fMemWrap.style.display = me.role === `member` ? `none` : `flex`;
+  if (fMem && me.role !== `member`) {
+    const cur = fMem.value || `all`;
+    fMem.innerHTML = `<option value="all">All Team Members</option>` + visUsers.filter(u => u.role !== `admin`).map(u => `<option value="${escapeHtml(u.id)}">${escapeHtml(u.name)}</option>`).join(``);
+    fMem.value = visUsers.some(u => u.id === cur) ? cur : `all`;
+  }
+
+  const fSw = document.getElementById(`filter-time-software`);
+  if (fSw && fSw.options.length === 0) fSw.innerHTML = `<option value="all">All Software</option>` + SOFTWARE_OPTIONS.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join(``);
+
+  const fProj = document.getElementById(`filter-time-project`);
+  if (fProj) {
+    const cur = fProj.value || `all`;
+    fProj.innerHTML = `<option value="all">All Visible Projects</option>` + visProjects.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.id)}</option>`).join(``);
+    fProj.value = visProjects.some(p => p.id === cur) ? cur : `all`;
+  }
+
+  const selM = fMem && me.role !== `member` ? fMem.value : `all`;
+  const selSw = fSw ? fSw.value : `all`;
+  const selP = fProj ? fProj.value : `all`;
+
+  const filtered = visLogs.filter(l => {
+    if (selM !== `all` && l.memberId !== selM) return false;
+    if (selSw !== `all` && l.software !== selSw) return false;
+    if (selP !== `all` && l.projectId !== selP) return false;
+    return true;
+  });
+
+  const totalApprovedSecs = filtered.filter(l => l.status === `approved`).reduce((a, l) => a + getLogSeconds(l), 0);
+  const totalEl = document.getElementById(`time-filtered-total`);
+  if (totalEl) totalEl.textContent = formatDurationExact(totalApprovedSecs);
+
+  const swTotals = SOFTWARE_OPTIONS.map(sw => ({
+    label: sw,
+    val: filtered.filter(l => l.status === `approved` && l.software === sw).reduce((a, l) => a + getLogSeconds(l), 0)
+  })).filter(x => x.val > 0);
+  renderBarChart(`time-weekly-chart`, swTotals.length ? swTotals : [{ label: `No approved time`, val: 0 }], `bar-series-1`);
+
+  const tbody = document.getElementById(`time-logs-tbody`);
+  if (tbody) {
+    tbody.innerHTML = filtered.map(l => {
+      const owner = appState.users.find(u => u.id === l.memberId);
+      const canApprove = isManagerOrAdmin() && l.status === `pending`;
+      const exactSecs = getLogSeconds(l);
+      return `
+        <tr>
+          <td><strong>${owner ? escapeHtml(owner.name) : `—`}</strong></td>
+          <td>${escapeHtml(l.software)}</td>
+          <td class="mono">${escapeHtml(l.projectId)}</td>
+          <td>${escapeHtml(l.fileName)}</td>
+          <td class="mono">${escapeHtml(l.date)}</td>
+          <td class="mono">${formatDurationExact(exactSecs)} <span class="small-label">(${exactSecs}s)</span></td>
+          <td><span class="badge ${statusBadgeClass(l.status)}">${escapeHtml(l.status)}</span></td>
+          <td class="text-right">
+            ${canApprove ? `
+              <button type="button" class="btn btn-success btn-sm" onclick="approveTimeLog('${escapeHtml(l.id)}', 'approved')">Approve</button>
+              <button type="button" class="btn btn-danger-outline btn-sm" onclick="approveTimeLog('${escapeHtml(l.id)}', 'rejected')">Reject</button>
+            ` : `<span class="small-label">${escapeHtml(l.source)}</span>`}
+          </td>
+        </tr>
+      `;
+    }).join(``) || `<tr><td colspan="8">No time entries visible in your scope.</td></tr>`;
+  }
+
+  updateTimerDisplayOnly();
+  refreshIcons();
+}
+
+function populateTimerTasks() {
+  const pEl = document.getElementById(`timer-project`);
+  const tEl = document.getElementById(`timer-task`);
+  if (!pEl || !tEl) return;
+  const visTasks = getVisibleTasks().filter(t => t.projectId === pEl.value);
+  tEl.innerHTML = `<option value="">General Project Work</option>` + visTasks.map(t => `<option value="${escapeHtml(t.id)}">${escapeHtml(t.title)}</option>`).join(``);
+}
+
+function startTimer() {
+  if (isAdmin()) return;
+  const memEl = document.getElementById(`timer-member`);
+  const swEl = document.getElementById(`timer-software`);
+  const prEl = document.getElementById(`timer-project`);
+  const tkEl = document.getElementById(`timer-task`);
+  const flEl = document.getElementById(`timer-file`);
+  const errEl = document.getElementById(`timer-error`);
+  if (!prEl || !prEl.value) {
+    if (errEl) { errEl.textContent = `Select a project before starting the timer.`; errEl.style.display = `block`; }
+    return;
+  }
+  if (errEl) errEl.style.display = `none`;
+
+  timerState.running = true;
+  timerState.paused = false;
+  timerState.accumulatedMs = 0;
+  timerState.startTimeMs = Date.now();
+  timerState.memberId = memEl ? memEl.value : getActiveUser().id;
+  timerState.software = swEl ? swEl.value : `Premiere Pro`;
+  timerState.projectId = prEl.value;
+  timerState.taskId = tkEl ? tkEl.value : ``;
+  timerState.fileName = (flEl && flEl.value.trim()) ? flEl.value.trim() : `${timerState.projectId}_Session_Cut`;
+
+  updateTimerUI();
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (timerState.running && !timerState.paused) updateTimerDisplayOnly();
+  }, 200);
+  showToast(`Live stopwatch started on ${timerState.projectId}.`);
+}
+
+function pauseOrResumeTimer() {
+  if (!timerState.running) return;
+  if (!timerState.paused) {
+    timerState.accumulatedMs += Math.max(0, Date.now() - timerState.startTimeMs);
+    timerState.paused = true;
+  } else {
+    timerState.startTimeMs = Date.now();
+    timerState.paused = false;
+  }
+  updateTimerUI();
+}
+
+function stopTimer() {
+  if (!timerState.running) return;
+  const exactSeconds = Math.max(1, getElapsedTimerSeconds());
+  clearInterval(timerInterval);
+  timerInterval = null;
+
+  appState.timeLogs.unshift({
+    id: `LOG-${501 + appState.timeLogs.length}`,
+    memberId: timerState.memberId,
+    projectId: timerState.projectId,
+    taskId: timerState.taskId,
+    software: timerState.software,
+    fileName: timerState.fileName,
+    date: `2026-11-23`,
+    seconds: exactSeconds,
+    status: `approved`,
+    source: `timer`
+  });
+
+  timerState.running = false;
+  timerState.paused = false;
+  timerState.accumulatedMs = 0;
+  timerState.startTimeMs = 0;
+  addAuditEntry(`Logged exact live timer: ${formatDurationExact(exactSeconds)} (${exactSeconds}s) on ${timerState.projectId}`);
+  updateTimerUI();
+  persistState();
+  renderTimeTrackerView();
+  showToast(`Saved exact session: ${formatDurationExact(exactSeconds)} (${exactSeconds} seconds).`);
+}
+
+function updateTimerDisplayOnly() {
+  const disp = document.getElementById(`stopwatch-display`);
+  const pillText = document.getElementById(`topbar-timer-text`);
+  const sec = getElapsedTimerSeconds();
+  const formatted = formatStopwatch(sec);
+  if (disp) disp.textContent = formatted;
+  if (pillText) pillText.textContent = timerState.running ? `${timerState.paused ? `Paused` : `Live`} · ${formatted}` : `Timer Idle`;
+}
+
+function updateTimerUI() {
+  updateTimerDisplayOnly();
+  const badge = document.getElementById(`timer-status-badge`);
+  const startBtn = document.getElementById(`btn-timer-start`);
+  const pauseBtn = document.getElementById(`btn-timer-pause`);
+  const stopBtn = document.getElementById(`btn-timer-stop`);
+  const owner = appState.users.find(u => u.id === timerState.memberId);
+
+  const mMem = document.getElementById(`meta-member`);
+  const mSw = document.getElementById(`meta-software`);
+  const mPr = document.getElementById(`meta-project`);
+  const mFl = document.getElementById(`meta-file`);
+  if (mMem) mMem.textContent = timerState.running && owner ? owner.name : `—`;
+  if (mSw) mSw.textContent = timerState.running ? timerState.software : `—`;
+  if (mPr) mPr.textContent = timerState.running ? timerState.projectId : `—`;
+  if (mFl) mFl.textContent = timerState.running ? timerState.fileName : `—`;
+
+  if (badge) badge.textContent = timerState.running ? (timerState.paused ? `PAUSED` : `RECORDING LIVE`) : `READY TO TRACK`;
+  if (startBtn) startBtn.style.display = timerState.running ? `none` : `inline-flex`;
+  if (pauseBtn) { pauseBtn.style.display = timerState.running ? `inline-flex` : `none`; pauseBtn.textContent = timerState.paused ? `Resume` : `Pause`; }
+  if (stopBtn) stopBtn.style.display = timerState.running ? `inline-flex` : `none`;
+  renderTopbarControls();
+}
+
+function approveTimeLog(logId, newStatus) {
+  if (!isManagerOrAdmin()) return;
+  const log = appState.timeLogs.find(l => l.id === logId);
+  if (!log) return;
+  log.status = newStatus;
+  addAuditEntry(`Marked time log ${log.id} as ${newStatus}`);
+  persistState();
+  renderTimeTrackerView();
+  showToast(`Time entry ${log.id} ${newStatus}.`);
+}
+
+function openManualTimeModal() {
+  if (isAdmin()) return;
+  const visProjects = getVisibleProjects();
+  openModal(`Add Manual Time Entry`, `
+    <div style="display:flex;flex-direction:column;gap:var(--space-md);">
+      <p class="muted-text" style="margin:0;font-size:0.84rem;">Manual entries enter as <strong>Pending</strong> until Manager or Admin approval.</p>
+      <div class="form-grid-2">
+        <div class="field"><label for="mt-project">Project</label><select id="mt-project" class="select">${visProjects.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.id)} · ${escapeHtml(p.title)}</option>`).join(``)}</select></div>
+        <div class="field"><label for="mt-software">Software</label><select id="mt-software" class="select">${SOFTWARE_OPTIONS.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join(``)}</select></div>
+        <div class="field"><label for="mt-mins">Minutes</label><input id="mt-mins" type="number" class="input" value="0" min="0"></div>
+        <div class="field"><label for="mt-secs">Seconds</label><input id="mt-secs" type="number" class="input" value="45" min="0" max="59"></div>
+      </div>
+      <div class="field"><label for="mt-file">File / Sequence Name</label><input id="mt-file" type="text" class="input" value="Edit_Revision_v2.prproj"></div>
+      <div style="display:flex;justify-content:flex-end;gap:var(--space-sm);">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveManualTimeEntry()">Submit for Approval</button>
+      </div>
+    </div>
+  `);
+}
+
+function saveManualTimeEntry() {
+  const me = getActiveUser();
+  const projectId = (document.getElementById(`mt-project`) || {}).value;
+  const software = (document.getElementById(`mt-software`) || {}).value;
+  const mins = Math.max(0, Number((document.getElementById(`mt-mins`) || {}).value) || 0);
+  const secs = Math.max(0, Math.min(59, Number((document.getElementById(`mt-secs`) || {}).value) || 0));
+  const totalSeconds = Math.max(1, Math.round(mins * 60 + secs));
+  const fileName = ((document.getElementById(`mt-file`) || {}).value || ``).trim() || `Manual_Session`;
+
+  appState.timeLogs.unshift({
+    id: `LOG-${501 + appState.timeLogs.length}`,
+    memberId: me.id, projectId, taskId: ``, software, fileName, date: `2026-11-23`, seconds: totalSeconds, status: `pending`, source: `manual`
+  });
+  persistState();
+  closeModal();
+  renderTimeTrackerView();
+  showToast(`Submitted ${formatDurationExact(totalSeconds)} (${totalSeconds}s) for approval.`);
+}
+
+// =========================================================================
+// 6. TEAM & CLIENT DIRECTORY (ADMIN ADDS MEMBERS/MANAGERS/CLIENTS; MANAGER ADDS MEMBERS)
+// =========================================================================
+function renderMembersView() {
+  const me = getActiveUser();
+  const visUsers = getVisibleUsers();
+
+  const subtitle = document.getElementById(`members-subtitle`);
+  const headerActions = document.getElementById(`members-header-actions`);
+  const filterBar = document.getElementById(`members-filter-bar`);
+  const grid = document.getElementById(`members-grid`);
+
+  if (subtitle) {
+    subtitle.textContent = me.role === `admin`
+      ? `Admin can add Team Members, Managers, and Clients. Presence is strictly self-managed — Admin can view live statuses but cannot alter or override another member's online/offline status.`
+      : me.role === `manager`
+        ? `Manager can add Team Members and assign tasks. Live presence statuses are self-managed by each user.`
+        : `Your personal EditFlow profile and self-managed presence controls.`;
+  }
+
+  if (headerActions) {
+    headerActions.innerHTML = isManagerOrAdmin()
+      ? `<button type="button" class="btn btn-primary" onclick="openNewMemberModal()"><i data-lucide="user-plus" aria-hidden="true"></i>${isAdmin() ? `Add Member / Manager / Client` : `Add Team Member`}</button>`
+      : ``;
+  }
+
+  if (filterBar) filterBar.style.display = me.role === `member` || me.role === `client` ? `none` : `grid`;
+
+  const search = ((document.getElementById(`filter-member-search`) || {}).value || ``).trim().toLowerCase();
+  const roleF = (document.getElementById(`filter-member-role`) || {}).value || `all`;
+  const regF = (document.getElementById(`filter-member-region`) || {}).value || `all`;
+  const presF = (document.getElementById(`filter-member-presence`) || {}).value || `all`;
+
+  const filtered = visUsers.filter(u => {
+    if (isManagerOrAdmin()) {
+      if (roleF !== `all` && u.role !== roleF) return false;
+      if (regF !== `all` && u.region !== regF) return false;
+      if (presF !== `all` && u.presence !== presF) return false;
+      if (search && !`${u.name} ${u.title} ${u.company || ``} ${(u.skills || []).join(` `)}`.toLowerCase().includes(search)) return false;
+    }
+    return true;
+  });
+
+  if (!grid) return;
+  grid.innerHTML = filtered.map(u => {
+    const openTasks = appState.tasks.filter(t => t.assigneeId === u.id && t.status !== `delivered`).length;
+    const isSelf = u.id === me.id;
+    const st = appState.screenShares && appState.screenShares[u.id];
+    return `
+      <article class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-sm);">
+          <div style="display:flex;align-items:center;gap:var(--space-sm);">
+            <div class="avatar-dot">${escapeHtml(u.avatar)}</div>
+            <div>
+              <h3 style="margin:0;font-size:1.05rem;">${escapeHtml(u.name)}</h3>
+              <div class="muted-text" style="font-size:0.82rem;">${escapeHtml(u.title)}</div>
+            </div>
+          </div>
+          <span class="badge ${statusBadgeClass(u.presence)}">${presenceDotHtml(u.presence)}${statusLabel(u.presence)}</span>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:var(--space-xs);margin-top:var(--space-md);">
+          <span class="badge badge-info">${escapeHtml(u.role.toUpperCase())}</span>
+          <span class="badge badge-neutral">${escapeHtml(u.region)}</span>
+          ${u.company ? `<span class="badge badge-neutral">${escapeHtml(u.company)}</span>` : `<span class="badge badge-neutral">${escapeHtml(u.employmentType.replace(`_`, ` `))}</span>`}
+          ${me.role === `admin` && u.role !== `client` ? `<span class="badge badge-neutral mono">$${u.hourlyRate}/hr</span>` : ``}
+        </div>
+
+        <div style="margin-top:var(--space-md);font-size:0.84rem;color:var(--on-surface-variant);">
+          <div>Timezone: <strong style="color:var(--on-surface);">${escapeHtml(u.timezone)}</strong></div>
+          ${u.role !== `client` ? `<div>Open Tasks: <strong style="color:var(--on-surface);">${openTasks}</strong></div>` : `<div>Billing Currency: <strong style="color:var(--on-surface);">${escapeHtml(u.billingCurrency || `USD`)}</strong></div>`}
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:var(--space-xs);margin-top:var(--space-sm);">
+          ${(u.skills || []).map(s => `<span class="badge badge-neutral">${escapeHtml(s)}</span>`).join(``)}
+        </div>
+
+        ${isSelf ? `
+          <div class="field" style="margin-top:var(--space-md);">
+            <label for="pres-${escapeHtml(u.id)}">My Self-Managed Presence</label>
+            <select id="pres-${escapeHtml(u.id)}" class="select" onchange="updateOwnPresence(this.value)">
+              <option value="online" ${u.presence === `online` ? `selected` : ``}>Online</option>
+              <option value="focus" ${u.presence === `focus` ? `selected` : ``}>In Focus</option>
+              <option value="offline" ${u.presence === `offline` ? `selected` : ``}>Offline</option>
+            </select>
+          </div>
+        ` : `
+          <div style="margin-top:var(--space-md);display:flex;justify-content:space-between;align-items:center;gap:var(--space-xs);flex-wrap:wrap;">
+            <span class="small-label">Presence: Self-managed (read-only)</span>
+            <div style="display:flex;gap:var(--space-xs);">
+              ${isManagerOrAdmin() && st && st.active ? `<button type="button" class="btn btn-outline btn-sm" onclick="viewMemberStream('${escapeHtml(u.id)}')">Stream</button>` : ``}
+              ${isManagerOrAdmin() && (u.role === `member` || u.role === `manager`) ? `<button type="button" class="btn btn-outline btn-sm" onclick="openNewTaskModal('${escapeHtml(u.id)}')">Assign Task</button>` : ``}
+            </div>
+          </div>
+        `}
+      </article>
+    `;
+  }).join(``) || `<div class="empty-state">No accounts match your filter.</div>`;
+  refreshIcons();
+}
+
+function openNewMemberModal() {
+  if (!isManagerOrAdmin()) return;
+  openModal(isAdmin() ? `Add Team Member, Manager, or Client` : `Add New Team Member`, `
+    <div style="display:flex;flex-direction:column;gap:var(--space-md);">
+      <div class="form-grid-2">
+        <div class="field"><label for="nm-name">Full Name</label><input id="nm-name" type="text" class="input" placeholder="e.g., Dilshan Jayawardena"></div>
+        <div class="field"><label for="nm-title">Job Title / Role Description</label><input id="nm-title" type="text" class="input" placeholder="e.g., Motion Editor or Brand VP"></div>
+        <div class="field">
+          <label for="nm-role">Account Role</label>
+          <select id="nm-role" class="select" onchange="toggleNewMemberClientFields(this.value)">
+            <option value="member">Team Member</option>
+            ${isAdmin() ? `<option value="manager">Manager</option><option value="client">Client</option>` : ``}
+          </select>
+        </div>
+        <div class="field">
+          <label for="nm-region">Region</label>
+          <select id="nm-region" class="select"><option value="LK">Sri Lanka (LK)</option><option value="INTL">International (INTL)</option></select>
+        </div>
+        <div class="field" id="nm-type-wrap">
+          <label for="nm-type">Employment Type</label>
+          <select id="nm-type" class="select"><option value="full_time">Full-time</option><option value="part_time">Part-time</option><option value="freelancer">Freelancer</option></select>
+        </div>
+        <div class="field" id="nm-rate-wrap"><label for="nm-rate">Hourly Rate (USD)</label><input id="nm-rate" type="number" class="input" value="38" min="0"></div>
+        <div class="field" id="nm-company-wrap" style="display:none;"><label for="nm-company">Client Organization</label><input id="nm-company" type="text" class="input" placeholder="e.g., Lumina Studio"></div>
+        <div class="field" id="nm-cur-wrap" style="display:none;"><label for="nm-currency">Preferred Billing Currency</label><select id="nm-currency" class="select">${Object.values(CURRENCY_CATALOG).map(c => `<option value="${c.code}">${c.code} (${c.symbol})</option>`).join(``)}</select></div>
+      </div>
+      <div class="form-grid-2">
+        <div class="field"><label for="nm-tz">Timezone</label><input id="nm-tz" type="text" class="input" value="Asia/Colombo (UTC+5:30)"></div>
+        <div class="field"><label for="nm-skills">Skills / Tags</label><input id="nm-skills" type="text" class="input" placeholder="Premiere Pro, Color Grading"></div>
+      </div>
+      <p class="muted-text" style="margin:0;font-size:0.8rem;">New accounts start as <strong>Offline</strong> and manage their own presence status.</p>
+      <div id="nm-error" class="form-error" style="display:none;"></div>
+      <div style="display:flex;justify-content:flex-end;gap:var(--space-sm);">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveNewMember()">Create Account</button>
+      </div>
+    </div>
+  `);
+}
+
+function toggleNewMemberClientFields(roleVal) {
+  const isCli = roleVal === `client`;
+  const tW = document.getElementById(`nm-type-wrap`);
+  const rW = document.getElementById(`nm-rate-wrap`);
+  const cW = document.getElementById(`nm-company-wrap`);
+  const curW = document.getElementById(`nm-cur-wrap`);
+  if (tW) tW.style.display = isCli ? `none` : `flex`;
+  if (rW) rW.style.display = isCli ? `none` : `flex`;
+  if (cW) cW.style.display = isCli ? `flex` : `none`;
+  if (curW) curW.style.display = isCli ? `flex` : `none`;
+}
+
+function saveNewMember() {
+  if (!isManagerOrAdmin()) return;
+  const name = ((document.getElementById(`nm-name`) || {}).value || ``).trim();
+  const title = ((document.getElementById(`nm-title`) || {}).value || ``).trim();
+  const reqRole = (document.getElementById(`nm-role`) || {}).value || `member`;
+  const role = isAdmin() ? reqRole : `member`;
+  const region = (document.getElementById(`nm-region`) || {}).value || `LK`;
+  const employmentType = role === `client` ? `client` : ((document.getElementById(`nm-type`) || {}).value || `full_time`);
+  const hourlyRate = role === `client` ? 0 : Math.max(0, Number((document.getElementById(`nm-rate`) || {}).value) || 35);
+  const company = ((document.getElementById(`nm-company`) || {}).value || ``).trim();
+  const billingCurrency = (document.getElementById(`nm-currency`) || {}).value || `USD`;
+  const timezone = ((document.getElementById(`nm-tz`) || {}).value || ``).trim() || `Asia/Colombo (UTC+5:30)`;
+  const skillsRaw = ((document.getElementById(`nm-skills`) || {}).value || ``).trim();
+  const errEl = document.getElementById(`nm-error`);
+
+  if (!name || !title) {
+    if (errEl) { errEl.textContent = `Provide full name and title.`; errEl.style.display = `block`; }
+    return;
+  }
+  const initials = name.split(/\s+/).map(p => p[0] || ``).join(``).toUpperCase().slice(0, 2) || `EF`;
+  const newId = `USR-${Date.now().toString().slice(-4)}`;
+  const skills = skillsRaw ? skillsRaw.split(`,`).map(s => s.trim()).filter(Boolean) : [role === `client` ? `Stakeholder` : `Post-Production`];
+
+  appState.users.push({
+    id: newId, username: name.toLowerCase().replace(/[^a-z0-9]/g, ``), name, role, title, region,
+    employmentType, timezone, hourlyRate, presence: `offline`, avatar: initials, skills,
+    company: role === `client` ? (company || title) : undefined,
+    billingCurrency: role === `client` ? billingCurrency : undefined
+  });
+  appState.userThemes[newId] = `aurora`;
+  addAuditEntry(`Added ${role}: ${name}`);
+  persistState();
+  closeModal();
+  renderAll();
+  showToast(`Added ${name} (${role.toUpperCase()}) to EditFlow.`);
+}
+
+// =========================================================================
+// 7. DELIVERY & FINAL DELIVERY DEADLINES
+// =========================================================================
+function renderProjectOverviewView() {
+  const visProjects = getVisibleProjects();
+  const search = ((document.getElementById(`filter-overview-search`) || {}).value || ``).trim().toLowerCase();
+  const cat = (document.getElementById(`filter-overview-category`) || {}).value || `all`;
+  const stage = (document.getElementById(`filter-overview-status`) || {}).value || `all`;
+
+  const filtered = visProjects.filter(p => {
+    if (cat !== `all` && p.category !== cat) return false;
+    if (stage === `delivered` && p.status !== `delivered`) return false;
+    if (stage === `active_pipeline` && p.status === `delivered`) return false;
+    if (search && !`${p.id} ${p.title} ${p.client}`.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  const deliveredProjects = filtered.filter(p => p.status === `delivered`);
+  const activeProjects = filtered.filter(p => p.status !== `delivered`);
+  const delEl = document.getElementById(`delivered-projects-section`);
+  const pipeEl = document.getElementById(`readiness-pipeline-section`);
+
+  if (delEl) {
+    delEl.innerHTML = stage === `active_pipeline` ? `` : `
+      <div style="display:flex;flex-direction:column;gap:var(--space-md);">
+        <div class="delivered-banner">
+          <div>
+            <h2 class="card-title" style="margin:0;">Final-Approved &amp; Delivered Projects (${deliveredProjects.length})</h2>
+            <p style="margin:var(--space-xs) 0 0;font-size:0.86rem;color:var(--on-surface-variant);">Completed deliverables with master video links and final look specs.</p>
+          </div>
+          <span class="badge badge-success">Final Approval Ready</span>
+        </div>
+        <div class="cards-grid">
+          ${deliveredProjects.map(p => {
+            const vw = p.videoWorkflow || { specs: ``, finalLookNotes: ``, videoLinks: [] };
+            return `
+              <article class="card" style="border-top:3px solid var(--positive);">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-sm);">
+                  <div><div class="small-label">${escapeHtml(p.id)} · ${escapeHtml(p.client)}</div><h3 style="margin:2px 0 0;font-size:1.05rem;">${escapeHtml(p.title)}</h3></div>
+                  <span class="badge badge-success">DELIVERED</span>
+                </div>
+                <p style="margin:var(--space-sm) 0;font-size:0.84rem;color:var(--on-surface-variant);">${escapeHtml(p.description)}</p>
+                <div style="display:flex;flex-direction:column;gap:var(--space-xs);margin-bottom:var(--space-sm);">
+                  ${(vw.videoLinks || []).map(vl => `<div class="video-link-chip"><span class="video-url-mono">${escapeHtml(vl.label)}: ${escapeHtml(vl.url)}</span><button type="button" class="btn btn-outline btn-sm" style="min-height:28px;" onclick="copyTextToClipboard('${escapeHtml(vl.url)}', '${escapeHtml(vl.label)}')">Copy</button></div>`).join(``)}
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span class="mono small-label">Delivered: ${escapeHtml(p.deliveredAt || p.deliveryDeadline)}</span>
+                  <button type="button" class="btn btn-outline btn-sm" onclick="openProjectBriefModal('${escapeHtml(p.id)}')">Inspect Brief</button>
+                </div>
+              </article>
+            `;
+          }).join(``) || `<div class="empty-state">No delivered projects match your filters.</div>`}
+        </div>
+      </div>
+    `;
+  }
+
+  if (pipeEl) {
+    pipeEl.innerHTML = stage === `delivered` ? `` : `
+      <div style="display:flex;flex-direction:column;gap:var(--space-md);">
+        <h2 class="card-title" style="margin:0;">Approaching Final Delivery Deadline (${activeProjects.length})</h2>
+        <div class="cards-grid">
+          ${activeProjects.map(p => {
+            const rd = calcProjectReadiness(p);
+            return `
+              <article class="card">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-sm);">
+                  <div><div class="small-label">${escapeHtml(p.id)} · ${escapeHtml(p.client)}</div><h3 style="margin:2px 0 0;font-size:1.05rem;">${escapeHtml(p.title)}</h3></div>
+                  <span class="badge ${statusBadgeClass(p.status)}">${statusLabel(p.status)}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:var(--space-sm);margin:var(--space-sm) 0;">
+                  <div class="progress-track"><div class="progress-fill" style="width:${rd.pct}%;"></div></div>
+                  <span class="mono" style="font-size:0.82rem;">${rd.pct}%</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:var(--space-xs);margin-bottom:var(--space-md);">
+                  ${(p.checklist || []).map(item => `
+                    <label class="checklist-row" style="cursor:pointer;">
+                      <span style="display:flex;align-items:center;gap:0.45rem;">
+                        <input type="checkbox" ${item.done ? `checked` : ``} onchange="toggleChecklistItem('${escapeHtml(p.id)}', '${escapeHtml(item.id)}')">
+                        <span>${escapeHtml(item.label)}</span>
+                      </span>
+                      <span class="badge badge-neutral">${escapeHtml(item.tier)}</span>
+                    </label>
+                  `).join(``)}
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--space-xs);">
+                  <span class="mono small-label">Deadline: ${escapeHtml(p.deliveryDeadline)}</span>
+                  ${isManagerOrAdmin() ? `<button type="button" class="btn btn-success btn-sm" onclick="promoteProjectToDelivery('${escapeHtml(p.id)}', 'Delivery Readiness')">Mark Final Approval</button>` : ``}
+                </div>
+              </article>
+            `;
+          }).join(``) || `<div class="empty-state">All projects delivered.</div>`}
+        </div>
+      </div>
+    `;
+  }
+  refreshIcons();
+}
+
+function toggleChecklistItem(projectId, itemId) {
+  const proj = appState.projects.find(p => p.id === projectId);
+  if (!proj) return;
+  const item = (proj.checklist || []).find(c => c.id === itemId);
+  if (item) { item.done = !item.done; persistState(); renderProjectOverviewView(); }
+}
+
+// =========================================================================
+// 8. FINANCE & INVOICES (MULTI-CURRENCY, ADMIN & MANAGER)
+// =========================================================================
+function renderFinanceView() {
+  if (!isManagerOrAdmin()) return;
+
+  const dispCur = appState.displayCurrency || `USD`;
+  const headerActions = document.getElementById(`finance-header-actions`);
+  if (headerActions) {
+    headerActions.innerHTML = `
+      <div class="user-switcher-pill">
+        <label for="fin-disp-currency" class="user-switcher-label">Summary Currency:</label>
+        <select id="fin-disp-currency" class="user-switcher-select" onchange="setDisplayCurrency(this.value)">
+          ${Object.values(CURRENCY_CATALOG).map(c => `<option value="${c.code}" ${c.code === dispCur ? `selected` : ``}>${c.code} (${c.symbol}) · ${c.country}</option>`).join(``)}
+        </select>
+      </div>
+      <button type="button" class="btn btn-primary" onclick="openNewInvoiceModal()"><i data-lucide="file-plus" aria-hidden="true"></i>New Invoice</button>
+    `;
+  }
+
+  const subBar = document.getElementById(`finance-subtab-bar`);
+  const content = document.getElementById(`finance-tab-content`);
+  const tabs = [
+    { id: `invoices`, label: `Multi-Currency Invoices` },
+    { id: `currencies`, label: `Currency Rates & Countries` },
+    { id: `payroll`, label: `Payroll Readiness` },
+    { id: `audit`, label: `Audit Ledger` }
+  ];
+  if (!tabs.some(t => t.id === appState.financeSubtab)) appState.financeSubtab = `invoices`;
+  if (subBar) {
+    subBar.innerHTML = tabs.map(t => `<button type="button" class="subtab-btn ${appState.financeSubtab === t.id ? `is-active` : ``}" onclick="setFinanceSubtab('${t.id}')">${t.label}</button>`).join(``);
+  }
+  if (!content) return;
+
+  const visInvoices = getVisibleInvoices();
+
+  if (appState.financeSubtab === `invoices`) {
+    const totalInv = visInvoices.reduce((a, i) => a + convertCurrency(i.amount, i.currency, dispCur), 0);
+    const totalCol = visInvoices.reduce((a, i) => a + convertCurrency(i.collected, i.currency, dispCur), 0);
+    const pct = totalInv > 0 ? Math.round((totalCol / totalInv) * 100) : 0;
+
+    content.innerHTML = `
+      <div class="kpi-grid">
+        <div class="kpi-card"><span class="kpi-label">Total Invoiced (${dispCur})</span><span class="kpi-val">${formatMoney(totalInv, dispCur)}</span><span class="kpi-delta">${visInvoices.length} multi-currency invoices</span></div>
+        <div class="kpi-card"><span class="kpi-label">Paid Revenue (${dispCur})</span><span class="kpi-val">${formatMoney(totalCol, dispCur)}</span><span class="kpi-delta">${pct}% collected</span></div>
+        <div class="kpi-card"><span class="kpi-label">Outstanding (${dispCur})</span><span class="kpi-val">${formatMoney(Math.max(0, totalInv - totalCol), dispCur)}</span><span class="kpi-delta">${visInvoices.filter(i => i.collected < i.amount).length} open</span></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Invoice</th><th>Project</th><th>Client</th><th>Currency</th><th>Amount (Native)</th><th>Collected</th><th>Converted (${dispCur})</th><th>Status</th><th class="text-right">Action</th></tr></thead>
+          <tbody>
+            ${visInvoices.map(inv => {
+              const cur = inv.currency || `USD`;
+              const convAmt = convertCurrency(inv.amount, cur, dispCur);
+              return `
+                <tr>
+                  <td class="mono"><strong>${escapeHtml(inv.id)}</strong></td>
+                  <td class="mono">${escapeHtml(inv.projectId)}</td>
+                  <td>${escapeHtml(inv.client)}</td>
+                  <td><span class="badge badge-info">${escapeHtml(cur)}</span></td>
+                  <td class="mono">${formatMoney(inv.amount, cur)}</td>
+                  <td class="mono">${formatMoney(inv.collected, cur)}</td>
+                  <td class="mono">${formatMoney(convAmt, dispCur)}</td>
+                  <td><span class="badge ${statusBadgeClass(inv.status)}">${statusLabel(inv.status)}</span></td>
+                  <td class="text-right">
+                    ${inv.collected < inv.amount ? `<button type="button" class="btn btn-primary btn-sm" onclick="openRecordPaymentModal('${escapeHtml(inv.id)}')">Record Payment</button>` : `<span class="badge badge-success">Settled</span>`}
+                  </td>
+                </tr>
+              `;
+            }).join(``) || `<tr><td colspan="9">No invoices found.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } else if (appState.financeSubtab === `currencies`) {
+    content.innerHTML = `
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Supported Multi-Country Currencies</h2>
+          <span class="badge badge-info">Active Display: ${escapeHtml(dispCur)}</span>
+        </div>
+        <div class="cards-grid">
+          ${Object.values(CURRENCY_CATALOG).map(c => `
+            <div class="checklist-row" style="padding:var(--space-md);">
+              <div>
+                <strong>${c.code} · ${c.name}</strong>
+                <div class="small-label">${c.country} · 1 ${c.code} = $${c.rateToUsd} USD</div>
+              </div>
+              <button type="button" class="btn ${c.code === dispCur ? `btn-primary` : `btn-outline`} btn-sm" onclick="setDisplayCurrency('${c.code}')">
+                ${c.code === dispCur ? `Active Summary` : `Use for Summary`}
+              </button>
+            </div>
+          `).join(``)}
+        </div>
+      </div>
+    `;
+  } else if (appState.financeSubtab === `payroll`) {
+    const payrollUsers = appState.users.filter(u => u.role !== `client`);
+    content.innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Team Member</th><th>Region</th><th>Approved Time</th>${isAdmin() ? `<th>Rate (USD)</th><th class="text-right">Payable (${dispCur})</th>` : `<th class="text-right">Type</th>`}</tr></thead>
+          <tbody>
+            ${payrollUsers.map(u => {
+              const secs = appState.timeLogs.filter(l => l.memberId === u.id && l.status === `approved`).reduce((a, l) => a + getLogSeconds(l), 0);
+              const payUsd = (secs / 3600) * u.hourlyRate;
+              const payDisp = convertCurrency(payUsd, `USD`, dispCur);
+              return `
+                <tr>
+                  <td><strong>${escapeHtml(u.name)}</strong></td>
+                  <td>${escapeHtml(u.region)}</td>
+                  <td class="mono">${formatDurationExact(secs)}</td>
+                  ${isAdmin() ? `<td class="mono">$${u.hourlyRate}/hr</td><td class="mono text-right">${formatMoney(payDisp, dispCur)}</td>` : `<td class="text-right">${escapeHtml(u.employmentType.replace(`_`, ` `))}</td>`}
+                </tr>
+              `;
+            }).join(``)}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } else {
+    content.innerHTML = `
+      <div class="card">
+        <h2 class="card-title" style="margin-bottom:var(--space-md);">EditFlow Audit Ledger</h2>
+        <div style="display:flex;flex-direction:column;gap:var(--space-sm);">
+          ${appState.auditLog.map(a => `<div class="checklist-row"><div><strong>${escapeHtml(a.action)}</strong><div class="small-label">Actor: ${escapeHtml(a.actor)}</div></div><span class="mono small-label">${escapeHtml(a.ts)}</span></div>`).join(``)}
+        </div>
+      </div>
+    `;
+  }
+  refreshIcons();
+}
+
+function setFinanceSubtab(tab) {
+  appState.financeSubtab = tab;
+  renderFinanceView();
+}
+
+function openNewInvoiceModal() {
+  if (!isManagerOrAdmin()) return;
+  const visProjects = getVisibleProjects();
+  openModal(`Create Multi-Currency Invoice`, `
+    <div style="display:flex;flex-direction:column;gap:var(--space-md);">
+      <div class="form-grid-2">
+        <div class="field"><label for="ni-project">Project</label><select id="ni-project" class="select">${visProjects.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.id)} · ${escapeHtml(p.client)}</option>`).join(``)}</select></div>
+        <div class="field"><label for="ni-currency">Invoice Currency</label><select id="ni-currency" class="select">${Object.values(CURRENCY_CATALOG).map(c => `<option value="${c.code}" ${c.code === appState.displayCurrency ? `selected` : ``}>${c.code} (${c.symbol}) · ${c.country}</option>`).join(``)}</select></div>
+        <div class="field"><label for="ni-amount">Invoice Amount</label><input id="ni-amount" type="number" class="input" value="4500" min="1"></div>
+        <div class="field"><label for="ni-collected">Initial Deposit Paid</label><input id="ni-collected" type="number" class="input" value="0" min="0"></div>
+        <div class="field"><label for="ni-due">Due Date</label><input id="ni-due" type="date" class="input" value="2026-12-15"></div>
+      </div>
+      <div id="ni-error" class="form-error" style="display:none;"></div>
+      <div style="display:flex;justify-content:flex-end;gap:var(--space-sm);">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveNewInvoice()">Issue Invoice</button>
+      </div>
+    </div>
+  `);
+}
+
+function saveNewInvoice() {
+  if (!isManagerOrAdmin()) return;
+  const projectId = (document.getElementById(`ni-project`) || {}).value;
+  const currency = (document.getElementById(`ni-currency`) || {}).value || `USD`;
+  const amount = Math.max(0, Number((document.getElementById(`ni-amount`) || {}).value) || 0);
+  const collected = Math.max(0, Math.min(amount, Number((document.getElementById(`ni-collected`) || {}).value) || 0));
+  const dueDate = (document.getElementById(`ni-due`) || {}).value || `2026-12-15`;
+  const errEl = document.getElementById(`ni-error`);
+  if (!projectId || amount <= 0) {
+    if (errEl) { errEl.textContent = `Enter a positive invoice amount.`; errEl.style.display = `block`; }
+    return;
+  }
+  const proj = appState.projects.find(p => p.id === projectId);
+  const newId = `INV-2026-0${appState.invoices.length + 1}`;
+  appState.invoices.unshift({
+    id: newId, projectId, client: proj ? proj.client : `Client`, currency, amount, collected, dueDate,
+    status: collected >= amount ? `paid` : collected > 0 ? `partial` : `pending`,
+    adminOnly: Boolean(proj && proj.adminOnly)
+  });
+  addAuditEntry(`Issued ${currency} invoice ${newId} (${formatMoney(amount, currency)})`);
+  persistState();
+  closeModal();
+  renderAll();
+  showToast(`Issued ${newId} in ${currency}.`);
+}
+
+function openRecordPaymentModal(invId) {
+  const inv = appState.invoices.find(i => i.id === invId);
+  if (!inv || !isManagerOrAdmin()) return;
+  const cur = inv.currency || `USD`;
+  const remaining = Math.max(0, inv.amount - inv.collected);
+  openModal(`Record Payment · ${inv.id} (${cur})`, `
+    <div style="display:flex;flex-direction:column;gap:var(--space-md);">
+      <p class="muted-text" style="margin:0;font-size:0.86rem;">Client: <strong>${escapeHtml(inv.client)}</strong> · Balance: <strong class="mono">${formatMoney(remaining, cur)}</strong></p>
+      <div class="field"><label for="rp-amount">Payment Amount (${cur})</label><input id="rp-amount" type="number" class="input" value="${remaining}" min="1" max="${remaining}"></div>
+      <div id="rp-error" class="form-error" style="display:none;"></div>
+      <div style="display:flex;justify-content:flex-end;gap:var(--space-sm);">
+        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveRecordedPayment('${escapeHtml(inv.id)}')">Apply Payment</button>
+      </div>
+    </div>
+  `);
+}
+
+function saveRecordedPayment(invId) {
+  const inv = appState.invoices.find(i => i.id === invId);
+  if (!inv || !isManagerOrAdmin()) return;
+  const remaining = Math.max(0, inv.amount - inv.collected);
+  const raw = Number((document.getElementById(`rp-amount`) || {}).value) || 0;
+  const errEl = document.getElementById(`rp-error`);
+  if (raw <= 0) {
+    if (errEl) { errEl.textContent = `Enter a payment greater than zero.`; errEl.style.display = `block`; }
+    return;
+  }
+  const add = Math.min(remaining, raw);
+  inv.collected += add;
+  inv.status = inv.collected >= inv.amount ? `paid` : `partial`;
+  addAuditEntry(`Recorded ${formatMoney(add, inv.currency)} payment on ${inv.id}`);
+  persistState();
+  closeModal();
+  renderAll();
+  showToast(`Recorded ${formatMoney(add, inv.currency)} on ${inv.id}.`);
+}
+
+// =========================================================================
+// 9. SETTINGS
+// =========================================================================
+function renderSettingsView() {
+  const me = getActiveUser();
+  const grid = document.getElementById(`settings-dynamic-grid`);
+  if (!grid) return;
+  const curTheme = (appState.userThemes && appState.userThemes[me.id]) || `aurora`;
+
+  grid.innerHTML = `
+    <div class="card">
+      <div class="card-header"><h2 class="card-title">Personal Liquid Glass Theme</h2></div>
+      <p class="muted-text" style="font-size:0.86rem;">Saved individually for ${escapeHtml(me.name)}.</p>
+      <div class="field">
+        <label for="settings-theme-select">Active Theme Preset</label>
+        <select id="settings-theme-select" class="select" onchange="setUserTheme(this.value)">
+          <option value="aurora" ${curTheme === `aurora` ? `selected` : ``}>Aurora</option>
+          <option value="crystal_light" ${curTheme === `crystal_light` ? `selected` : ``}>Crystal Light</option>
+          <option value="midnight_glass" ${curTheme === `midnight_glass` ? `selected` : ``}>Midnight Glass</option>
+          <option value="sunset" ${curTheme === `sunset` ? `selected` : ``}>Sunset</option>
+          <option value="graphite" ${curTheme === `graphite` ? `selected` : ``}>Graphite</option>
+        </select>
+      </div>
+      <div class="field" style="margin-top:var(--space-md);">
+        <label for="settings-presence-select">My Self-Managed Presence</label>
+        <select id="settings-presence-select" class="select" onchange="updateOwnPresence(this.value)">
+          <option value="online" ${me.presence === `online` ? `selected` : ``}>Online</option>
+          <option value="focus" ${me.presence === `focus` ? `selected` : ``}>In Focus</option>
+          <option value="offline" ${me.presence === `offline` ? `selected` : ``}>Offline</option>
+        </select>
+      </div>
+      <div class="field" style="margin-top:var(--space-md);">
+        <label for="settings-currency-select">Preferred Finance Display Currency</label>
+        <select id="settings-currency-select" class="select" onchange="setDisplayCurrency(this.value)">
+          ${Object.values(CURRENCY_CATALOG).map(c => `<option value="${c.code}" ${c.code === appState.displayCurrency ? `selected` : ``}>${c.code} (${c.symbol}) · ${c.country}</option>`).join(``)}
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h2 class="card-title">EditFlow Role Permissions</h2></div>
+      <div style="display:flex;flex-direction:column;gap:var(--space-xs);font-size:0.86rem;">
+        <div class="checklist-row"><span>Active Role</span><span class="badge badge-info">${me.role.toUpperCase()}</span></div>
+        <div class="checklist-row"><span>Multi-Currency Finance &amp; Invoices</span><span class="badge ${isManagerOrAdmin() ? `badge-success` : `badge-danger`}">${isManagerOrAdmin() ? `Allowed` : `Restricted`}</span></div>
+        <div class="checklist-row"><span>View Team Screen Streams</span><span class="badge ${isManagerOrAdmin() ? `badge-success` : `badge-danger`}">${isManagerOrAdmin() ? `Allowed` : `Members Broadcast Only`}</span></div>
+        <div class="checklist-row"><span>Add Managers &amp; Clients</span><span class="badge ${isAdmin() ? `badge-success` : `badge-neutral`}">${isAdmin() ? `Admin Only` : `Restricted`}</span></div>
+        <div class="checklist-row"><span>Add Team Members &amp; Assign Tasks</span><span class="badge ${isManagerOrAdmin() ? `badge-success` : `badge-danger`}">${isManagerOrAdmin() ? `Allowed` : `Restricted`}</span></div>
+        <div class="checklist-row"><span>Override Others' Online/Offline Status</span><span class="badge badge-danger">Disabled (Self-Managed Only)</span></div>
+      </div>
+      ${me.role === `admin` ? `
+        <div style="margin-top:var(--space-md);display:flex;gap:var(--space-sm);flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="exportWorkspaceJson()">Export Backup JSON</button>
+          <button type="button" class="btn btn-danger-outline btn-sm" onclick="resetWorkspaceState(this)">Reset Demo Data</button>
+        </div>
+      ` : ``}
+    </div>
+  `;
+}
+
+function exportWorkspaceJson() {
+  if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === `function`) {
+    window.notebookAppApi.triggerFileDownload({
+      content: JSON.stringify(appState, null, 2),
+      contentType: `text/plain`,
+      encoding: `UTF-8`,
+      filename: `editflow_studio_backup.json`
+    });
+  }
+  showToast(`Exported EditFlow backup JSON.`);
+}
+
+function resetWorkspaceState(btn) {
+  if (btn.dataset.armed !== `true`) {
+    btn.dataset.armed = `true`;
+    btn.textContent = `Click again to confirm reset`;
+    return;
+  }
+  btn.dataset.armed = `false`;
+  btn.textContent = `Reset Demo Data`;
+  appState = buildDefaultState();
+  adminSessionUnlocked = false;
+  persistState();
+  applyActiveUserTheme();
+  renderAll();
+  showToast(`EditFlow reset to default demo state.`);
+}
+
+// =========================================================================
+// MODAL & BOOTSTRAP
+// =========================================================================
+function openModal(title, bodyHtml) {
+  const m = document.getElementById(`app-modal`);
+  const t = document.getElementById(`modal-title`);
+  const b = document.getElementById(`modal-body`);
+  if (t) t.textContent = title;
+  if (b) b.innerHTML = bodyHtml;
+  if (m) m.classList.add(`is-open`);
+  refreshIcons();
+}
+
+function closeModal() {
+  const m = document.getElementById(`app-modal`);
+  if (m) m.classList.remove(`is-open`);
+}
+
+function handleBackdropClick(event) {
+  if (event.target && event.target.id === `app-modal`) closeModal();
+}
+
+function renderActiveView() {
+  const v = appState.activeView;
+  if (v !== `screen-share`) cancelStreamLoop();
+  if (v === `dashboard`) renderDashboardView();
+  else if (v === `analytics`) renderAnalyticsView();
+  else if (v === `screen-share`) renderScreenShareView();
+  else if (v === `projects`) renderProjectsView();
+  else if (v === `time-tracker`) renderTimeTrackerView();
+  else if (v === `members`) renderMembersView();
+  else if (v === `project-overview`) renderProjectOverviewView();
+  else if (v === `finance-tracker`) renderFinanceView();
+  else if (v === `settings`) renderSettingsView();
+}
+
+function renderAll() {
+  renderTopbarControls();
+  renderSidebar();
+  document.querySelectorAll(`.view-section`).forEach(sec => {
+    sec.classList.toggle(`is-active`, sec.id === `view-${appState.activeView}`);
+  });
+  renderActiveView();
+}
+
+async function initEditFlow() {
+  appState = buildDefaultState();
+  try {
+    if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === `function`) {
+      const saved = await window.notebookAppApi.getAppState();
+      if (saved && Array.isArray(saved.projects) && Array.isArray(saved.users)) {
+        appState = saved;
+        const restoredUser = appState.users.find(u => u.id === appState.activeUserId);
+        if (restoredUser && restoredUser.role === `admin`) {
+          const fallback = appState.users.find(u => u.role === `manager`) || appState.users[1] || appState.users[0];
+          if (fallback && fallback.role !== `admin`) appState.activeUserId = fallback.id;
+        }
+      }
+    }
+  } catch (err) {
+    appState = buildDefaultState();
+  }
+
+  applyActiveUserTheme();
+  const me = getActiveUser();
+  const allowed = getNavItemsForRole(me.role).map(n => n.id);
+  if (!allowed.includes(appState.activeView)) appState.activeView = `dashboard`;
+  renderAll();
+
+  if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === `function`) {
+    window.notebookAppApi.notifyAppReady();
+  }
+}
+
+document.addEventListener(`DOMContentLoaded`, () => {
+  initEditFlow();
+});
+</script>
+</body>
+</html>
